@@ -1,0 +1,28 @@
+body {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+#nav {
+    height: 50px;
+    padding-top: 10px;
+    background-color: cornflowerblue;
+    padding-top: 30px;
+    font-size: large;
+    text-align: center;
+}
+
+.navIt{
+    text-align: center;
+    padding-right: 35px;
+    text-decoration: none;
+    color: white;
+    background-color: cornflowerblue;
+    padding-top: 30px;
+    padding-bottom: 29px;
+    padding-left: 35px;
+}
+
+.navIt:hover {
+    background-color: #F5B8D4;
+    color: black;
+}
