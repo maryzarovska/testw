@@ -2,6 +2,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { login as loginAction } from './application-store/userSlice';
 
 function Login() {
 
@@ -10,36 +11,30 @@ function Login() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const topage = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        dispatch();
-        navigate("/profile")
-    }
-
-    function login(event:React.FormEvent<HTMLFormElement>) {
+    function login(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         axios.post("/api/users/signin", {
             username, password
-        }).then(response => 
-            {
-                console.log(response.data);
-                if (response.data.token) {
-                   localStorage.setItem("token", `Bearer ${response.data.token}`) 
-                }
-                
-            })
+        }).then(response => {
+            if (response.data.token) {
+                localStorage.setItem("token", `Bearer ${response.data.token}`)
+                dispatch(loginAction(response.data.userData));
+                navigate("/profile");
+            }
+        });
     }
 
-    return ( 
+    return (
         <>
-        <h1>Log In</h1>
+            <h1>Log In</h1>
 
-        <form onSubmit={login}>
+            <form onSubmit={login}>
                 <input type="text" value={username} onChange={event => setUsername(event.target.value)} /> <br />
                 <input type="password" value={password} onChange={event => setPassword(event.target.value)} /> <br /><br />
                 <button type="submit">Log in</button>
             </form>
         </>
-     );
+    );
 }
 
 export default Login;

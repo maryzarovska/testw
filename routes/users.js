@@ -25,7 +25,7 @@ router.post('/signin', async (req, res, next) => {
         return next(error);
       }
       if (!user) {
-        return res.json({message: 'Invalid username or password!'})
+        return res.json({ message: 'Invalid username or password!' })
       }
       req.login(
         user, { session: false },
@@ -33,10 +33,10 @@ router.post('/signin', async (req, res, next) => {
           if (error) {
             return next(error);
           }
-          const body = { id: user.id, username: user.username };
-          const token = jwt.sign({ user: body }, config.jwtSecret);
+          const userData = { id: user.id, username: user.username };
+          const token = jwt.sign({ user: userData }, config.jwtSecret);
 
-          return res.json({ token });
+          return res.json({ token, userData });
         }
       );
     } catch (error) {

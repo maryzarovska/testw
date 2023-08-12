@@ -1,69 +1,82 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
+
 import logo from './logo.svg';
 import './css/App.css';
-import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
+
 import NavPannel from './NavPannel';
 import Home from './Home';
 import About from './About';
 import Fandoms from './Fandoms';
 import Search from './Search';
 import Register from './Register';
-import Profile from './Profile';
 import Login from './Login';
+import Profile from './Profile';
+import Logout from './Logout';
+
+import store from './application-store/store';
 
 const router = createBrowserRouter([{
   path: "/",
-  element: <Root/>,
+  element: <Root />,
   children: [
     {
       path: "",
-      element: <Home/>
+      element: <Home />
     },
 
     {
       path: "fandoms",
-      element: <Fandoms/>
+      element: <Fandoms />
     },
 
     {
       path: "search",
-      element: <Search/>
+      element: <Search />
     },
 
     {
       path: "about",
-      element: <About/>
+      element: <About />
     },
 
     {
       path: "registration",
-      element: <Register/>
+      element: <Register />
     },
 
     {
       path: "login",
-      element: <Login/>
+      element: <Login />
     },
 
     {
       path: "profile",
-      element: <Profile/>
+      element: <Profile />
+    },
+
+    {
+      path: "logout",
+      element: <Logout />
     }
   ]
 }])
 
 function App() {
   return (
-    <div className="App">
-      <RouterProvider router={router}/>
-    </div>
+    <Provider store={store}>
+      <div className='App'>
+        <RouterProvider router={router} />
+      </div>
+    </Provider>
   );
 }
 
 function Root() {
   return (<>
-  <NavPannel/>
-  <Outlet/>
+    <NavPannel />
+    <Outlet />
   </>)
 }
 

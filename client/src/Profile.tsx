@@ -3,18 +3,18 @@ import axios from 'axios';
 
 function Profile() {
 
-    React.useEffect(()=>{
+    React.useEffect(() => {
         axios.get("/api/users/profile", {
-            headers: {"Authorization": localStorage.getItem("token")}
-        }).then(response => console.log(response))
-    }, [])
+            headers: { "Authorization": localStorage.getItem("token") }
+        }).then(response => console.log(response));
+    }, []);
 
-    return ( 
+    return (
         <>
-        <h1>Profile</h1>
-        <h3>Username: </h3>
+            <h1>Profile</h1>
+            <h3>Username: </h3>
         </>
-     );
+    );
 }
 
 export default Profile;
