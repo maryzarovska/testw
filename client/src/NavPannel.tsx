@@ -14,10 +14,12 @@ function NavPannel() {
             <Link to={"/about"} className='navIt'>About</Link>
             {user.value ?
                 <>
-                    <Link to='/profile' className='navIt'>Profile</Link><Link to='/logout' className='navIt'>Log Out</Link>
+                    <Link to='/profile' className='navIt'>Profile</Link>
+                    <Link to='/logout' className='navIt'>Log Out</Link>
                 </>
                 : <>
-                    <Link to='/registration' className='navIt'>Register</Link><Link to='/login' className='navIt'>Log In</Link>
+                    <Link to='/login' className='navIt'>Log In</Link>
+                    <Link to='/registration' className='navIt'>Register</Link>
                 </>
             }
         </div>
