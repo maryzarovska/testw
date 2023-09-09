@@ -7,9 +7,9 @@ const posts = require('../services/posts');
 //   res.render('index', { title: 'Express' });
 // });
 
-router.get("/test-db/:username", function(req, res, next) {
+router.get("/test-db/:username", async function(req, res, next) {
     const username = req.params.username;
-    res.json(posts.getByUsername(username));
-})
+    res.json(await posts.getByCategory(username));
+});
 
 module.exports = router;

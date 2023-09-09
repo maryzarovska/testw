@@ -24,7 +24,7 @@ async function getByUsername(username) {
 
     const data = helper.emptyOrRows(rows);
 
-    return data.length > 0 ? data[0]:null;
+    return data.length > 0 ? data[0] : null;
 }
 
 async function insertOne(user) {
