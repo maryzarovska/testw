@@ -9,7 +9,10 @@ const posts = require('../services/posts');
 
 router.get("/get-posts-by-username/:username", async function(req, res, next) {
     const username = req.params.username;
-    res.json(await posts.getByCategory(username));
+    setTimeout(async () => {
+        res.json(await posts.getByCategory(username));
+    }, 3000);
+    
     // setTimeout(() => {
     //     res.json([
     //         {
