@@ -16,6 +16,7 @@ import Profile from './Profile';
 import Logout from './Logout';
 
 import store from './application-store/store';
+import Create from './Create';
 
 const router = createBrowserRouter([{
   path: "/",
@@ -59,6 +60,11 @@ const router = createBrowserRouter([{
     {
       path: "logout",
       element: <Logout />
+    },
+
+    {
+      path: "create-work",
+      element: <Create />
     }
   ]
 }])

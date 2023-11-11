@@ -20,7 +20,7 @@ async function getMultiple(page = 1) {
 async function getByUsername(username, page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query (
-        `SELECT posts.id, title, posts.text, user_id 
+        `SELECT posts.id, title, posts.text, user_id, rating, relationship
         FROM posts 
         INNER JOIN users 
         ON posts.user_id = users.id
@@ -59,4 +59,21 @@ async function getByCategory(category, page = 1) {
     }
 }
 
-module.exports = {getByUsername, getByCategory, getMultiple}
+async function insertOne(post) {
+    const result = await db.query(
+        `INSERT INTO posts (title, text, user_id, rating, relationship)
+        VALUES ('${post.title}', '${post.text}', '${post.user_id}', '${post.rating}', '${post.relationship}')`
+    );
+
+    return result;
+}
+
+async function deleteById(id, user) {
+    const remove = await db.query(
+        `DELETE FROM posts WHERE id = ${id} AND user_id = ${user.id}`
+    );
+
+    return remove;
+}
+
+module.exports = {getByUsername, getByCategory, getMultiple, insertOne, deleteById}

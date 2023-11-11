@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const posts = require('../services/posts');
+const passport = require('passport');
+
+const users = require('../services/users');
+const config = require('../config');
+require('../config/passport-config')(passport, users.getByUsername, users.insertOne);
 
 /* GET home page. */
 // router.get('/', function(req, res, next) {
@@ -36,5 +41,14 @@ router.get("/get-posts-by-username/:username", async function(req, res, next) {
     //     ]);
     // }, 2000);
 });
+
+router.delete("/posts/:id", passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+    res.json(await posts.deleteById(req.params.id, req.user));
+})
+
+router.post("/create-post", passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+    console.log(req.body)
+    res.json(await posts.insertOne(req.body));
+  });
 
 module.exports = router;

@@ -2,12 +2,16 @@ import * as React from 'react';
 import axios from 'axios';
 import { HashLoader } from 'react-spinners';
 import './css/Profile.css';
+import { Link } from 'react-router-dom';
+import { response } from 'express';
 
 function Profile() {
 
     const [user, setUser] = React.useState<{ id: number, username: string }>()
     const [loading, setLoading] = React.useState<boolean>(true)
-    const [posts, setPosts] = React.useState<{ id: number, title: string, text: string, userId: number }[]>()
+    const [posts, setPosts] = React.useState<{ id: number, title: string, text: string, userId: number, rating: string, relationship: string}[]>()
+    const modal = React.useRef<HTMLDivElement>(null)
+    const [idToDelete, setIdToDelete] = React.useState<number|null>()
 
     React.useEffect(() => {
         axios.get("/api/users/profile", {
@@ -15,16 +19,41 @@ function Profile() {
         }).then(async response => {
             setUser(response.data.user);
 
-            let responsePosts = await axios.get<{ data: { id: number, title: string, text: string, userId: number }[], meta: any }>(`/api/get-posts-by-username/${response.data.user.username}`)
+            let responsePosts = await axios.get<{ data: { id: number, title: string, text: string, userId: number, rating: string, relationship: string}[], meta: any }>(`/api/get-posts-by-username/${response.data.user.username}`)
             setLoading(false)
             setPosts(responsePosts.data.data);
         });
     }, []);
 
+    function deleteClick(event: any) {
+        if (modal.current) {
+            modal.current.style.display = "block";
+            document.body.style.overflow = "hidden";
+            setIdToDelete(event.target.getAttribute("data-id"))
+        }
+    }
+
+    function deleteAccept() {
+        axios.delete(`/api/posts/${idToDelete}`, {headers: {"Authorization": localStorage.getItem("token")}}).then(response => {
+            console.log(response.data)
+        })
+    }
+
+    React.useEffect(()=>{console.log(idToDelete)}, [idToDelete])
+
+    function cancelClick() {
+        if (modal.current) {
+            modal.current.style.display = "none";
+            document.body.style.overflow = "visible"
+            setIdToDelete(null)
+        }
+    }
+    
     return (
         <>
             <h1>Profile</h1>
-            <h3>Username: </h3> {user?.username}
+            <h3>Username: </h3> {user?.username} <br />
+            <Link to="/create-work">Create a new work</Link>
             <h3>Published works:</h3>
             {loading ?
                 <div className='spinnerWrap'>
@@ -34,10 +63,22 @@ function Profile() {
                     {posts?.map(post => <div className='postItem' key={post.id}>
                         <h4>{post.title}</h4>
                         <p>{post.text}</p>
+                        <p>Rating: {post.rating}</p>
+                        <p>Relationship: {post.relationship}</p>
+                        <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
                     </div>)}
                 </div>
             }
 
+            <div className='modal' ref={modal}>
+                <div className='modalData'>
+                    <h2>Delete post</h2>
+                    <p>Are you sure you want to delete this post?</p>
+                    <p>You won't be able to restore it.</p>
+                    <button className='button2' id='correct' onClick={deleteAccept}>Yes</button> 
+                    <button className='button2' id='cancel' onClick={cancelClick}>Cancel</button>
+                </div>
+            </div>
 
         </>
     );

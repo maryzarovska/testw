@@ -2,3 +2,56 @@
     display: flex;
     justify-content: center;
 }
+
+button {
+    height: 30px;
+    width: 100px;
+    border-radius: 5px;
+    font-weight: bolder;
+}
+
+#correct {
+    margin-right: 10px;
+    background-color: red;
+    color: white;
+}
+
+#correct:hover {
+    background-color: white;
+    color: red;
+}
+
+#cancel {
+    background-color: black;
+    color: white;
+}
+
+#cancel:hover {
+    background-color: white;
+    color: black;
+}
+
+.modal {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    inset: 0;
+    display: none;
+}
+
+.modalData{
+    height: 25%;
+    position: absolute;
+    padding: 25px;
+    background-color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: solid black 5px;
+}
+
+#deleteBtn:hover {
+    background-color: red;
+    color: white;
+}
