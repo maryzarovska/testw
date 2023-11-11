@@ -16,7 +16,7 @@ router.get("/get-posts-by-username/:username", async function(req, res, next) {
     const username = req.params.username;
     setTimeout(async () => {
         res.json(await posts.getByUsername(username));
-    }, 3000);
+    }, 1000);
     
     // setTimeout(() => {
     //     res.json([
