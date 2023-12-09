@@ -62,9 +62,13 @@ function Profile() {
     return (
         <>
             <h1>Profile</h1>
-            <h3>Username: </h3> {user?.username} <br />
-            <Link to="/create-work">Create a new work</Link>
-            <h3>Published works:</h3>
+            <div className='info'><div className='posUser'><h3>Username: </h3> {user?.username}</div> <br />
+            <div className='create'><Link to="/create-work">&#128934; Create a new work</Link></div></div>
+            <div id='navP'>
+                <Link to={"/"} className='navItP' id='activated'>Published Works</Link>
+                <Link to={"/"} className='navItP'>Drafts</Link>
+                <Link to={"/"} className='navItP'>Comments</Link>
+            </div>
             {loading ?
                 <div className='spinnerWrap'>
                     <HashLoader color="#6495ed" className='spinner' />
@@ -72,16 +76,16 @@ function Profile() {
                 <div className='postsWrap'>
                     {posts?.map(post => <div className='postItem' key={post.id}>
                         <h4>{post.title}</h4>
-                        <p>{post.text}</p>
                         <p>Rating: {post.rating}</p>
                         <p>Relationship: {post.relationship}</p>
+                        <p>{post.text}</p>
                         <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
                     </div>)}
                 </div>
             }
 
-            <div className='modal' ref={modal}>
-                <div className='modalData'>
+            <div className='modal' ref={modal} onClick={cancelClick}>
+                <div className='modalData' onClick={event => event.stopPropagation()}>
                     <h2>Delete post</h2>
                     <p>Are you sure you want to delete this post?</p>
                     <p>You won't be able to restore it.</p>

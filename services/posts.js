@@ -14,7 +14,7 @@ async function getMultiple(page = 1) {
     return {
         data,
         meta
-    }
+    } 
 }
 
 async function getByUsername(username, page = 1) {

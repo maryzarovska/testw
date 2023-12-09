@@ -55,3 +55,69 @@ button {
     background-color: red;
     color: white;
 }
+
+.posUser {
+    text-align: left;
+    margin-left: 50px;
+}
+
+.create {
+
+    height: 40px;
+    width: 180px;
+    border-radius: 5px;
+    text-decoration: none;
+    padding-top: 15px;
+    margin-left: 40px;
+    text-decoration: none;
+}
+
+.create * {
+    text-decoration: none;
+}
+
+.postItem{
+    text-align: left;
+    margin-bottom: 100px;
+    border: solid black 5px;
+    margin-left: 8%;
+    margin-right: 30%;
+    padding: 20px;
+}
+
+.info {
+    border: solid black 2px;
+    padding: 10px;
+    padding-left: 150px;
+}
+
+#navP {
+    height: 50px;
+    padding-top: 10px;
+    background-color: #6495ed;
+    padding-top: 30px;
+    font-size: large;
+    text-align: left;
+    margin: 10px;
+}
+
+.navItP{
+    text-align: center;
+    padding-right: 35px;
+    text-decoration: none;
+    color: black;
+    background-color: white;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 35px;
+}
+
+.navItP:hover {
+    background-color: #F5B8D4;
+    color: black;
+}
+
+#activated {
+    background-color: cornflowerblue;
+    color: white;
+}
