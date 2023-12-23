@@ -65,7 +65,16 @@ async function insertOne(post) {
         VALUES ('${post.title}', '${post.text}', '${post.user_id}', '${post.rating}', '${post.relationship}')`
     );
 
-    console.log(result.insertId)
+    const post_id = result.insertId;
+    const pairs = [];
+    for (let category of post.categories) {
+        pairs.push(`(${post_id}, ${category.id})`);
+    }
+
+    await db.query(
+        `INSERT INTO post_category (post_id, category_id)
+        VALUES ${pairs.join(', ')}`
+    );
 
     return result;
 }
