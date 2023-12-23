@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const posts = require('../services/posts');
+const categories = require('../services/categories');
 const passport = require('passport');
 
 const users = require('../services/users');
@@ -47,8 +48,14 @@ router.delete("/posts/:id", passport.authenticate('jwt', { session: false }), as
 })
 
 router.post("/create-post", passport.authenticate('jwt', { session: false }), async (req, res, next) => {
-    console.log(req.body)
-    res.json(await posts.insertOne(req.body));
-  });
+    //console.log(req.body)
+    const p = await posts.insertOne(req.body);
+    console.log(p)
+    res.json(p);
+});
+
+router.get("/categories/all", async (req, res, next) => {
+    res.json(await categories.getAll())
+})
 
 module.exports = router;

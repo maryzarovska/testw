@@ -4,7 +4,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 function Create() {
-    const [categories, setCategories] = useState<string[]>(["Detective", "Fantasy", "Romance", "Science fiction", "Horror"])
+    const [categories, setCategories] = useState<{id: number, cat_name: string}[]>([])
     let relationships = ["Gen", "F/M", "F/F", "M/M", "Multi"]
     let ratings = ["G (General Audience)", "T (Teen and Up Audience)", "M (Mature)", "E (Explicit)"]
     const user = useSelector((state: any) => state.user.value)
@@ -12,20 +12,35 @@ function Create() {
     const [text, setText] = useState("")
     const [rating, setRating] = useState("")
     const [relationship, setRelationship] = useState("")
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<{id: number, cat_name: string}[]>([]);
 
     function create() {
-        axios.post("/api/create-post", { title, text, user_id: user.id, rating, relationship }, { headers: { "Authorization": localStorage.getItem("token") } })
+        axios.post("/api/create-post", { title, text, user_id: user.id, rating, relationship, categories: selectedCategories }, { headers: { "Authorization": localStorage.getItem("token") } })
+
     }
 
+    useEffect(() => {
+        axios.get<{id: number, cat_name: string}[]>("/api/categories/all").then(response => {
+            setCategories(response.data)
+        })
+    }, [])
+
     function toSelect(event: React.ChangeEvent<HTMLSelectElement>) {
-        setSelectedCategories([...selectedCategories, event.target.value]);
-        setCategories(categories.filter(c => c !== event.target.value))
+        const cat = categories.find(c => c.cat_name === event.target.value)
+        if (cat) {
+            setSelectedCategories([...selectedCategories, cat]);
+            setCategories(categories.filter(c => c.cat_name !== event.target.value))
+        }
+        
     }
 
     function toUnselect(event: any) {
-        setCategories([...categories, event.target.dataset.category]);
-        setSelectedCategories(selectedCategories.filter(c => c !== event.target.dataset.category))
+        const cat = selectedCategories.find(c => c.cat_name === event.target.dataset.category)
+        if (cat) {
+            setCategories([...categories, cat]);
+            setSelectedCategories(selectedCategories.filter(c => c.cat_name !== event.target.dataset.category))
+        }
+        
     }
 
     return (<>
@@ -54,7 +69,7 @@ function Create() {
             <div className="selected">
                 {selectedCategories.map((value, index) => 
                 
-                    <span className="selectedCategory" key={value}>{value} <span data-category={value} onClick={toUnselect} style={{color: "red", cursor: "pointer"}}>&#9932;</span> </span>
+                    <span className="selectedCategory" key={value.id}>{value.cat_name} <span data-category={value.cat_name} onClick={toUnselect} style={{color: "red", cursor: "pointer"}}>&#9932;</span> </span>
 
                 )}
             </div>
@@ -65,7 +80,7 @@ function Create() {
             <select onChange={toSelect} name="categories" multiple className="categories">
                 {categories.map((value, index) =>
 
-                    <option value={value} key={value}>{value}</option>
+                    <option value={value.cat_name} key={value.id}>{value.cat_name}</option>
 
                 )}
             </select>

@@ -12,6 +12,7 @@ function Profile() {
     const [posts, setPosts] = React.useState<{ id: number, title: string, text: string, userId: number, rating: string, relationship: string }[]>()
     const modal = React.useRef<HTMLDivElement>(null)
     const [idToDelete, setIdToDelete] = React.useState<number | null>()
+    const [tableName, setTableName] = React.useState<"published works" | "drafts" | "comments">("published works");
 
     React.useEffect(() => {
         axios.get("/api/users/profile", {
@@ -65,10 +66,14 @@ function Profile() {
             <div className='info'><div className='posUser'><h3>Username: </h3> {user?.username}</div> <br />
             <div className='create'><Link to="/create-work">&#128934; Create a new work</Link></div></div>
             <div id='navP'>
-                <Link to={"/"} className='navItP' id='activated'>Published Works</Link>
-                <Link to={"/"} className='navItP'>Drafts</Link>
-                <Link to={"/"} className='navItP'>Comments</Link>
+                <span className={tableName === "published works" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("published works")}>Published Works</span>
+                <span className={tableName === "drafts" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("drafts")}>Drafts</span>
+                <span className={tableName === "comments" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("comments")}>Comments</span>
+
+        
             </div>
+            
+            {tableName === "published works" ? <>
             {loading ?
                 <div className='spinnerWrap'>
                     <HashLoader color="#6495ed" className='spinner' />
@@ -92,7 +97,14 @@ function Profile() {
                     <button className='button2' id='correct' onClick={deleteAccept}>Yes</button>
                     <button className='button2' id='cancel' onClick={cancelClick}>Cancel</button>
                 </div>
-            </div>
+            </div> </> : 
+            
+            tableName === "drafts" ? 
+            <>Drafts</> :
+
+            tableName === "comments" ?
+            <>Comments</> : <>Error</>
+            }
 
         </>
     );

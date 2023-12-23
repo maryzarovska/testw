@@ -65,6 +65,8 @@ async function insertOne(post) {
         VALUES ('${post.title}', '${post.text}', '${post.user_id}', '${post.rating}', '${post.relationship}')`
     );
 
+    console.log(result.insertId)
+
     return result;
 }
 
