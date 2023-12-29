@@ -20,12 +20,15 @@ async function getMultiple(page = 1) {
 async function getByUsername(username, page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query (
-        `SELECT posts.id, title, posts.text, user_id, rating, relationship
-        FROM posts 
-        INNER JOIN users 
-        ON posts.user_id = users.id
-        WHERE users.username = '${username}'
-        LIMIT ${offset}, ${config.listPerPage}`
+        `select posts.id, title, posts.text, user_id, rating, relationship,
+        group_concat(cat_name separator ',') as categories_list
+        from posts
+        inner join users on posts.user_id = users.id
+        left join post_category on posts.id = post_category.post_id
+        left join categories on post_category.category_id = categories.id
+        where users.username = '${username}'
+        group by posts.id
+        limit ${offset}, ${config.listPerPage}`
     );
 
     const data = helper.emptyOrRows(rows);

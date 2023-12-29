@@ -5,11 +5,21 @@ import './css/Profile.css';
 import { Link } from 'react-router-dom';
 import { response } from 'express';
 
+type Post = {
+    id: number,
+    title: string,
+    text: string,
+    userId: number,
+    rating: string,
+    relationship: string,
+    categories_list: string
+}
+
 function Profile() {
 
     const [user, setUser] = React.useState<{ id: number, username: string }>()
     const [loading, setLoading] = React.useState<boolean>(true)
-    const [posts, setPosts] = React.useState<{ id: number, title: string, text: string, userId: number, rating: string, relationship: string }[]>()
+    const [posts, setPosts] = React.useState<Post[]>()
     const modal = React.useRef<HTMLDivElement>(null)
     const [idToDelete, setIdToDelete] = React.useState<number | null>()
     const [tableName, setTableName] = React.useState<"published works" | "drafts" | "comments">("published works");
@@ -20,7 +30,7 @@ function Profile() {
         }).then(async response => {
             setUser(response.data.user);
 
-            let responsePosts = await axios.get<{ data: { id: number, title: string, text: string, userId: number, rating: string, relationship: string }[], meta: any }>(`/api/get-posts-by-username/${response.data.user.username}`)
+            let responsePosts = await axios.get<{ data: Post[], meta: any }>(`/api/get-posts-by-username/${response.data.user.username}`)
             setLoading(false)
             setPosts(responsePosts.data.data);
         });
@@ -84,6 +94,7 @@ function Profile() {
                         <p>Rating: {post.rating}</p>
                         <p>Relationship: {post.relationship}</p>
                         <p>{post.text}</p>
+                        <p>{post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
                         <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
                     </div>)}
                 </div>

@@ -3,6 +3,7 @@ const config = {
         host: "localhost",
         user: "root",
         password: "Mdls22113123",
+        // password: "admin",
         database: "funtest",
         
         // host: "sql11.freemysqlhosting.net",
