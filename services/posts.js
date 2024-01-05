@@ -90,4 +90,13 @@ async function deleteById(id, user) {
     return remove;
 }
 
-module.exports = {getByUsername, getByCategory, getMultiple, insertOne, deleteById}
+async function getById(id) {
+    const post = await db.query(
+        `SELECT * FROM posts WHERE id = ${id}`
+    );
+    if (post) {
+        return post[0];
+    } else return null;
+}
+
+module.exports = {getByUsername, getByCategory, getMultiple, insertOne, deleteById, getById}

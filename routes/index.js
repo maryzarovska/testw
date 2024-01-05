@@ -58,4 +58,8 @@ router.get("/categories/all", async (req, res, next) => {
     res.json(await categories.getAll())
 })
 
+router.get("/posts/:id", async (req, res, next) => {
+    res.json(await posts.getById(req.params.id))
+})
+
 module.exports = router;

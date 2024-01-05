@@ -91,11 +91,11 @@ function Profile() {
                 </div> :
                 <div className='postsWrap'>
                     {posts?.map(post => <div className='postItem' key={post.id}>
-                        <h4>{post.title}</h4>
+                        <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
                         <p>Rating: {post.rating}</p>
                         <p>Relationship: {post.relationship}</p>
+                        <p>Categories: {post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
                         <p>Summary: {post.summary}</p>
-                        <p>{post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
                         <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
                     </div>)}
                 </div>
