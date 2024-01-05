@@ -13,9 +13,10 @@ function Create() {
     const [rating, setRating] = useState("")
     const [relationship, setRelationship] = useState("")
     const [selectedCategories, setSelectedCategories] = useState<{id: number, cat_name: string}[]>([]);
+    const [summary, setSummary] = useState("");
 
     function create() {
-        axios.post("/api/create-post", { title, text, user_id: user.id, rating, relationship, categories: selectedCategories }, { headers: { "Authorization": localStorage.getItem("token") } })
+        axios.post("/api/create-post", { title, summary, text, user_id: user.id, rating, relationship, categories: selectedCategories }, { headers: { "Authorization": localStorage.getItem("token") } })
 
     }
 
@@ -90,6 +91,7 @@ function Create() {
         <form>
             <br />
             <input type="text" placeholder="Title" className="title" value={title} onChange={event => setTitle(event.target.value)} /> <br /> <br />
+            <textarea name="" id="" cols={80} rows={7} placeholder="Summary" className="summary" value={summary} onChange={event => setSummary(event.target.value)}></textarea> <br /><br />
             <textarea name="" id="" cols={80} rows={20} placeholder="Content" className="text" value={text} onChange={event => setText(event.target.value)}></textarea>
         </form>
 

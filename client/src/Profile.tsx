@@ -8,6 +8,7 @@ import { response } from 'express';
 type Post = {
     id: number,
     title: string,
+    summary: string,
     text: string,
     userId: number,
     rating: string,
@@ -93,7 +94,7 @@ function Profile() {
                         <h4>{post.title}</h4>
                         <p>Rating: {post.rating}</p>
                         <p>Relationship: {post.relationship}</p>
-                        <p>{post.text}</p>
+                        <p>Summary: {post.summary}</p>
                         <p>{post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
                         <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
                     </div>)}
