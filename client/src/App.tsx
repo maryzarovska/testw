@@ -17,6 +17,7 @@ import Logout from './Logout';
 
 import store from './application-store/store';
 import Create from './Create';
+import Post from './Post';
 
 const router = createBrowserRouter([{
   path: "/",
@@ -65,7 +66,12 @@ const router = createBrowserRouter([{
     {
       path: "create-work",
       element: <Create />
-    }
+    },
+
+    {
+      path: "posts/:id",
+      element: <Post />
+    },
   ]
 }])
 
