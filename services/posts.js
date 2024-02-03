@@ -7,19 +7,19 @@ async function getMultiple(page = 1) {
     const rows = await db.query(
         `SELECT id, title, summary, text, user_id FROM posts LIMIT ${offset}, ${config.listPerPage}`
     );
-    
+
     const data = helper.emptyOrRows(rows);
     const meta = { page };
 
     return {
         data,
         meta
-    } 
+    }
 }
 
 async function getByUsername(username, page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
-    const rows = await db.query (
+    const rows = await db.query(
         `select posts.id, title, summary, posts.text, user_id, rating, relationship,
         group_concat(cat_name separator ',') as categories_list
         from posts
@@ -99,4 +99,27 @@ async function getById(id) {
     } else return null;
 }
 
-module.exports = {getByUsername, getByCategory, getMultiple, insertOne, deleteById, getById}
+async function searchByTextAndCategories(text, categories_list) {
+    // const offset = helper.getOffset(page, config.listPerPage);
+    const rows = await db.query(
+        `SELECT posts.id, title, summary, posts.text, user_id 
+        FROM posts 
+        INNER JOIN post_category
+        ON posts.id = post_category.post_id
+        INNER JOIN categories 
+        ON categories.id = post_category.category_id
+        WHERE LOWER(posts.title) LIKE LOWER('%${text}%')`
+    );
+
+    const data = helper.emptyOrRows(rows);
+    //const meta = { page };
+
+    // return {
+    //     data,
+    //     meta
+    // }
+
+    return data;
+}
+
+module.exports = { getByUsername, getByCategory, getMultiple, insertOne, deleteById, getById, searchByTextAndCategories }

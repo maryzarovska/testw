@@ -12,6 +12,4 @@ async function getAll() {
     return data 
 }
 
-
-
 module.exports = {getAll}
