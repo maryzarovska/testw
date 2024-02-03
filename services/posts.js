@@ -101,14 +101,16 @@ async function getById(id) {
 
 async function searchByTextAndCategories(text, categories_list) {
     // const offset = helper.getOffset(page, config.listPerPage);
+    console.log('====================================');
+    console.log(categories_list.map(cat => cat.id).join(','));
+    console.log('====================================');
     const rows = await db.query(
-        `SELECT posts.id, title, summary, posts.text, user_id 
-        FROM posts 
-        INNER JOIN post_category
-        ON posts.id = post_category.post_id
-        INNER JOIN categories 
-        ON categories.id = post_category.category_id
-        WHERE LOWER(posts.title) LIKE LOWER('%${text}%')`
+        `select posts.id, title, posts.text, user_id, rating, relationship, group_concat(cat_name separator ',') as categories_list from posts
+        inner join users on posts.user_id = users.id
+        left join post_category on posts.id = post_category.post_id
+        left join categories on post_category.category_id = categories.id
+        where (LOWER(posts.title) LIKE LOWER('%${text}%'))` + (categories_list.length > 0 ? `and (post_category.category_id in (${categories_list.map(cat => cat.id).join(',')}))`:"")+
+        `group by posts.id;`
     );
 
     const data = helper.emptyOrRows(rows);
