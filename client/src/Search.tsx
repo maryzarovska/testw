@@ -1,6 +1,8 @@
 import * as React from 'react';
 import './css/Search.css';
+import './css/Profile.css';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function Search() {
 
@@ -8,6 +10,7 @@ function Search() {
   const [selectedCategories, setSelectedCategories] = React.useState<{ cat_name: string, id: number }[]>([]);
   const [categoriesSearchText, setCategoriesSearchText] = React.useState<string>("");
   const [textSearchText, setTextSearchText] = React.useState<string>("");
+  const [posts, setPosts] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     axios.get<{ id: number, cat_name: string }[]>("/api/categories/all").then(response => {
@@ -17,7 +20,7 @@ function Search() {
 
   function searchItems() {
     axios.post("/api/posts/list", { textSearchText, categories: selectedCategories }).then(response => {
-      console.log(response.data)
+      setPosts(response.data);
     })
   }
 
@@ -60,6 +63,17 @@ function Search() {
     <div><input type="text" value={textSearchText} onChange={event => setTextSearchText(event.target.value)} /></div>
 
     <button onClick={searchItems}>Search</button>
+
+    <div className='postsWrap'>
+      {posts?.map(post => <div className='postItem' key={post.id}>
+        <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
+        <p>Author: <Link to={`/user/${post.username}`}>{post.username}</Link></p>
+        <p>Rating: {post.rating}</p>
+        <p>Relationship: {post.relationship}</p>
+        <p>Categories: {post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
+        <p>Summary: {post.summary}</p>
+      </div>)}
+    </div>
 
   </>);
 }

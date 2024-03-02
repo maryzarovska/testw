@@ -15,7 +15,6 @@ router.post('/signup', (req, res, next) => {
       res.status(200).json(info);
     }
   })(req, res, next);
-  // res.json({});
 })
 
 router.post('/signin', async (req, res, next) => {
@@ -44,13 +43,6 @@ router.post('/signin', async (req, res, next) => {
       return next(error);
     }
   })(req, res, next);
-  // res.json({
-  //   token: 'token', userData: {
-  //     id: 1,
-  //     username: 'admin',
-  //     password: 'admin',
-  //   }
-  // });
 });
 
 router.get('/profile', passport.authenticate('jwt', { session: false }), (req, res, next) => {
@@ -58,14 +50,12 @@ router.get('/profile', passport.authenticate('jwt', { session: false }), (req, r
     message: 'You made it to the secure route',
     user: req.user
   });
-  // res.json({
-  //   message: 'You made it to the secure route',
-  //   user: {
-  //     id: 1,
-  //     username: 'admin',
-  //     password: 'admin',
-  //   }
-  // });
 });
+
+router.get('/profile/:username', async (req, res, next) => {
+  res.json(
+    await users.getUserData(req.params.username)
+  )
+})
 
 module.exports = router;

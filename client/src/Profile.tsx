@@ -4,21 +4,11 @@ import { HashLoader } from 'react-spinners';
 import './css/Profile.css';
 import { Link } from 'react-router-dom';
 import { response } from 'express';
-
-type Post = {
-    id: number,
-    title: string,
-    summary: string,
-    text: string,
-    userId: number,
-    rating: string,
-    relationship: string,
-    categories_list: string
-}
+import { Post } from './PostType';
 
 function Profile() {
 
-    const [user, setUser] = React.useState<{ id: number, username: string }>()
+    const [user, setUser] = React.useState<{ id: number, username: string, name: string }>()
     const [loading, setLoading] = React.useState<boolean>(true)
     const [posts, setPosts] = React.useState<Post[]>()
     const modal = React.useRef<HTMLDivElement>(null)
@@ -75,6 +65,7 @@ function Profile() {
         <>
             <h1>Profile</h1>
             <div className='info'><div className='posUser'><h3>Username: </h3> {user?.username}</div> <br />
+            <div className='posUser'><h3>Name: </h3> {user?.name}</div> <br />
             <div className='create'><Link to="/create-work">&#128934; Create a new work</Link></div></div>
             <div id='navP'>
                 <span className={tableName === "published works" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("published works")}>Published Works</span>
@@ -92,6 +83,7 @@ function Profile() {
                 <div className='postsWrap'>
                     {posts?.map(post => <div className='postItem' key={post.id}>
                         <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
+                        <p>Author: <Link to={`/user/${user?.username}`}>{user?.username}</Link></p>
                         <p>Rating: {post.rating}</p>
                         <p>Relationship: {post.relationship}</p>
                         <p>Categories: {post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>

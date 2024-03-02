@@ -20,7 +20,7 @@ async function getMultiple(page = 1) {
 async function getByUsername(username, page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `select posts.id, title, summary, posts.text, user_id, rating, relationship,
+        `select posts.id, title, summary, posts.text, user_id, username, rating, relationship,
         group_concat(cat_name separator ',') as categories_list
         from posts
         inner join users on posts.user_id = users.id
@@ -101,11 +101,8 @@ async function getById(id) {
 
 async function searchByTextAndCategories(text, categories_list) {
     // const offset = helper.getOffset(page, config.listPerPage);
-    console.log('====================================');
-    console.log(categories_list.map(cat => cat.id).join(','));
-    console.log('====================================');
     const rows = await db.query(
-        `select posts.id, title, posts.text, user_id, rating, relationship, group_concat(cat_name separator ',') as categories_list from posts
+        `select posts.id, title, posts.text, user_id, username, rating, relationship, group_concat(cat_name separator ',') as categories_list from posts
         inner join users on posts.user_id = users.id
         left join post_category on posts.id = post_category.post_id
         left join categories on post_category.category_id = categories.id

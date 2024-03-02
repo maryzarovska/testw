@@ -5,7 +5,7 @@ const config = require('../config');
 async function getMultiple(page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `SELECT id, username, password FROM users LIMIT ${offset}, ${config.listPerPage}`
+        `SELECT id, username, password, name FROM users LIMIT ${offset}, ${config.listPerPage}`
     );
     
     const data = helper.emptyOrRows(rows);
@@ -19,7 +19,7 @@ async function getMultiple(page = 1) {
 
 async function getByUsername(username) {
     const rows = await db.query (
-        `SELECT id, username, password FROM users WHERE username='${username}'`
+        `SELECT id, username, password, name FROM users WHERE username='${username}'`
     );
 
     const data = helper.emptyOrRows(rows);
@@ -36,8 +36,19 @@ async function insertOne(user) {
     return result;
 }
 
+async function getUserData(username) {
+    const rows = await db.query (
+        `SELECT id, username, name FROM users WHERE username='${username}'`
+    );
+
+    const data = helper.emptyOrRows(rows);
+
+    return data.length > 0 ? data[0] : null;
+}
+
 module.exports = {
     getMultiple,
     getByUsername,
-    insertOne
+    insertOne,
+    getUserData
 }

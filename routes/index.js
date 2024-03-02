@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const posts = require('../services/posts');
 const categories = require('../services/categories');
+const comments = require('../services/comments')
 const passport = require('passport');
 
 const users = require('../services/users');
@@ -37,6 +38,10 @@ router.post("/posts/list", async(req, res, next) => {
 
 router.get("/posts/:id", async (req, res, next) => {
     res.json(await posts.getById(req.params.id))
+})
+
+router.get("/comments/:postId", async(req, res, next) => {
+    res.json(await comments.getByPostId(req.params.postId))
 })
 
 module.exports = router;
