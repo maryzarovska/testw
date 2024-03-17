@@ -5,7 +5,10 @@ const config = require('../config');
 async function getByPostId(postId, page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `SELECT id, user_id, post_id, text FROM comments WHERE post_id = ${postId} LIMIT ${offset}, ${config.listPerPage}`
+        `SELECT t1.id, t2.username, t1.text 
+        FROM comments t1
+        JOIN users t2 ON t1.user_id = t2.id
+        WHERE post_id = ${postId} LIMIT ${offset}, ${config.listPerPage}`
     );
 
     const data = helper.emptyOrRows(rows);
@@ -17,4 +20,13 @@ async function getByPostId(postId, page = 1) {
     }
 }
 
-module.exports = {getByPostId};
+async function insertOne(comment) {
+    const result = await db.query(
+        `INSERT INTO comments (user_id, post_id, text)
+        VALUES ('${comment.user_id}', '${comment.post_id}', "${comment.text}")`
+    );
+
+    return result;
+}
+
+module.exports = {getByPostId, insertOne};

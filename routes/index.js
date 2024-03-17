@@ -44,4 +44,9 @@ router.get("/comments/:postId", async(req, res, next) => {
     res.json(await comments.getByPostId(req.params.postId))
 })
 
+router.post("/create-comment", passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+    const p = await comments.insertOne(req.body);
+    res.json(p);
+})
+
 module.exports = router;
