@@ -5,7 +5,9 @@ const config = require('../config');
 async function getMultiple(page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `SELECT id, title, summary, text, user_id FROM posts LIMIT ${offset}, ${config.listPerPage}`
+        `SELECT id, title, summary, text, user_id, publication_date
+        FROM posts
+        LIMIT ${offset}, ${config.listPerPage}`
     );
 
     const data = helper.emptyOrRows(rows);
@@ -20,7 +22,7 @@ async function getMultiple(page = 1) {
 async function getByUsername(username, page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `select posts.id, title, summary, posts.text, user_id, username, rating, relationship,
+        `select posts.id, title, summary, posts.text, user_id, username, rating, relationship, publication_date,
         group_concat(cat_name separator ',') as categories_list
         from posts
         inner join users on posts.user_id = users.id
@@ -28,6 +30,7 @@ async function getByUsername(username, page = 1) {
         left join categories on post_category.category_id = categories.id
         where users.username = '${username}'
         group by posts.id
+        order by publication_date desc
         limit ${offset}, ${config.listPerPage}`
     );
 
@@ -43,13 +46,14 @@ async function getByUsername(username, page = 1) {
 async function getByCategory(category, page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `SELECT posts.id, title, summary, posts.text, user_id 
+        `SELECT posts.id, title, summary, posts.text, user_id, publication_date 
         FROM posts 
         INNER JOIN post_category
         ON posts.id = post_category.post_id
         INNER JOIN categories 
         ON categories.id = post_category.category_id
         WHERE categories.cat_name = '${category}'
+        ORDER BY publication_date DESC
         LIMIT ${offset}, ${config.listPerPage}`
     );
 
@@ -102,12 +106,13 @@ async function getById(id) {
 async function searchByTextAndCategories(text, categories_list) {
     // const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `select posts.id, title, posts.text, user_id, username, rating, relationship, group_concat(cat_name separator ',') as categories_list from posts
+        `select posts.id, title, posts.text, user_id, username, rating, relationship, publication_date, group_concat(cat_name separator ',') as categories_list from posts
         inner join users on posts.user_id = users.id
         left join post_category on posts.id = post_category.post_id
         left join categories on post_category.category_id = categories.id
         where (LOWER(posts.title) LIKE LOWER('%${text}%'))` + (categories_list.length > 0 ? `and (post_category.category_id in (${categories_list.map(cat => cat.id).join(',')}))`:"")+
-        `group by posts.id;`
+        `group by posts.id
+        order by publication_date desc;`
     );
 
     const data = helper.emptyOrRows(rows);

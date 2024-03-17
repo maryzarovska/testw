@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import parse from 'html-react-parser';
 
 function Post() {
     const params = useParams();
@@ -18,14 +21,16 @@ function Post() {
             setLoading(false);
             axios.get(`/api/comments/${params.id}`).then(response => {
                 setComment(response.data.data);
+                console.log(response.data.data);
             })
         })
     }, []);
 
     function publish() {
-        axios.post("/api/create-comment", { user_id: user.id, post_id: post.id, text }, { headers: { "Authorization": localStorage.getItem("token") } }).then(response=>{
+        axios.post("/api/create-comment", { user_id: user.id, post_id: post.id, text }, { headers: { "Authorization": localStorage.getItem("token") } }).then(response => {
             console.log(response.data.insertId);
-            setComment([...comment, {id: response.data.insertId, text, username: user.username}])
+            console.log({ id: response.data.insertId, text, username: user.username, publication_date: new Date() });
+            setComment([{ id: response.data.insertId, text, username: user.username, publication_date: new Date() }, ...comment])
             setText("");
         })
     }
@@ -42,14 +47,26 @@ function Post() {
                         <div>
                             <textarea name="" id="" cols={100} rows={10} value={text} onChange={event => setText(event.target.value)}></textarea>
                         </div>
+                        <div>
+                            <CKEditor
+                                editor={ClassicEditor}
+                                data={text}
+                                onReady={editor => {
+                                    console.log('Editor is ready to use!', editor);
+                                }}
+                                onChange={(event, editor) => {
+                                    setText(editor.getData());
+                                }}
+                            />
+                        </div>
                         <button type="submit" onClick={publish}>Send</button>
                     </div>
 
                     {
                         comment.map(comment =>
                             <div key={comment.id}>
-                                <h3>{comment.username}</h3>
-                                <p>{comment.text}</p>
+                                <h3>{comment.username} {new Date(comment.publication_date).toLocaleString()}</h3>
+                                <p>{parse(comment.text)}</p>
                             </div>
 
                         )
