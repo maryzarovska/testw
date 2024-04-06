@@ -45,12 +45,12 @@ function Post() {
 
                     <div style={{ width: "60%", padding: "20px", marginRight: "20%", marginLeft: "20%" }}>
                         <div>
-                            <textarea name="" id="" cols={100} rows={10} value={text} onChange={event => setText(event.target.value)}></textarea>
-                        </div>
-                        <div>
                             <CKEditor
                                 editor={ClassicEditor}
                                 data={text}
+                                config={{
+                                    toolbar: []
+                                }}
                                 onReady={editor => {
                                     console.log('Editor is ready to use!', editor);
                                 }}

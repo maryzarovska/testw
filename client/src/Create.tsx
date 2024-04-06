@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import './css/Create.css';
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { Alignment } from '@ckeditor/ckeditor5-alignment';
 
 function Create() {
-    const [categories, setCategories] = useState<{id: number, cat_name: string}[]>([])
+    const [categories, setCategories] = useState<{ id: number, cat_name: string }[]>([])
     let relationships = ["Gen", "F/M", "F/F", "M/M", "Multi"]
     let ratings = ["G (General Audience)", "T (Teen and Up Audience)", "M (Mature)", "E (Explicit)"]
     const user = useSelector((state: any) => state.user.value)
@@ -12,7 +15,7 @@ function Create() {
     const [text, setText] = useState("")
     const [rating, setRating] = useState("")
     const [relationship, setRelationship] = useState("")
-    const [selectedCategories, setSelectedCategories] = useState<{id: number, cat_name: string}[]>([]);
+    const [selectedCategories, setSelectedCategories] = useState<{ id: number, cat_name: string }[]>([]);
     const [summary, setSummary] = useState("");
 
     function create() {
@@ -21,7 +24,7 @@ function Create() {
     }
 
     useEffect(() => {
-        axios.get<{id: number, cat_name: string}[]>("/api/categories/all").then(response => {
+        axios.get<{ id: number, cat_name: string }[]>("/api/categories/all").then(response => {
             setCategories(response.data)
         })
     }, [])
@@ -32,7 +35,7 @@ function Create() {
             setSelectedCategories([...selectedCategories, cat]);
             setCategories(categories.filter(c => c.cat_name !== event.target.value))
         }
-        
+
     }
 
     function toUnselect(event: any) {
@@ -41,7 +44,7 @@ function Create() {
             setCategories([...categories, cat]);
             setSelectedCategories(selectedCategories.filter(c => c.cat_name !== event.target.dataset.category))
         }
-        
+
     }
 
     return (<>
@@ -68,9 +71,9 @@ function Create() {
 
         <div className="selectedWrapped">
             <div className="selected">
-                {selectedCategories.map((value, index) => 
-                
-                    <span className="selectedCategory" key={value.id}>{value.cat_name} <span data-category={value.cat_name} onClick={toUnselect} style={{color: "red", cursor: "pointer"}}>&#9932;</span> </span>
+                {selectedCategories.map((value, index) =>
+
+                    <span className="selectedCategory" key={value.id}>{value.cat_name} <span data-category={value.cat_name} onClick={toUnselect} style={{ color: "red", cursor: "pointer" }}>&#9932;</span> </span>
 
                 )}
             </div>
@@ -92,6 +95,23 @@ function Create() {
             <br />
             <input type="text" placeholder="Title" className="title" value={title} onChange={event => setTitle(event.target.value)} /> <br /> <br />
             <textarea name="" id="" cols={80} rows={7} placeholder="Summary" className="summary" value={summary} onChange={event => setSummary(event.target.value)}></textarea> <br /><br />
+            <CKEditor
+                editor={ClassicEditor}
+                config={{
+                    // plugins: [
+                    //     Alignment
+                    // ],
+                    toolbar: [
+                        'undo', 'redo',
+                        '|', 'heading',
+                        '|', 'bold', 'italic', 'strikethrough',
+                        '|', 'alignment',
+                        '|', 'link', 'blockQuote',
+                        '|', 'bulletedList', 'numberedList', 'outdent', 'indent'
+                    ]
+
+                }}
+            ></CKEditor>
             <textarea name="" id="" cols={80} rows={20} placeholder="Content" className="text" value={text} onChange={event => setText(event.target.value)}></textarea>
         </form>
 
