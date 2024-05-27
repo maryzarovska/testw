@@ -17,7 +17,7 @@ function User() {
             setUserData(response.data)
         })
 
-        axios.get<{ data: Post[], meta: any }>(`/api/get-posts-by-username/${params.username}`).then(response => {
+        axios.get<{ data: Post[], meta: any }>(`/api/get-posts-by-username-foreign-user/${params.username}`).then(response => {
             setPosts(response.data.data)
             setLoading(false)
         })

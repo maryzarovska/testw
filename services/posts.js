@@ -5,8 +5,9 @@ const config = require('../config');
 async function getMultiple(page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `SELECT id, title, summary, text, user_id, publication_date
+        `SELECT id, title, summary, text, user_id, publication_date, is_draft
         FROM posts
+        WHERE is_draft = 0
         LIMIT ${offset}, ${config.listPerPage}`
     );
 
@@ -22,13 +23,37 @@ async function getMultiple(page = 1) {
 async function getByUsername(username, page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `select posts.id, title, summary, posts.text, user_id, username, rating, relationship, publication_date,
+        `select posts.id, title, summary, posts.text, user_id, username, rating, relationship, publication_date, is_draft,
         group_concat(cat_name separator ',') as categories_list
         from posts
         inner join users on posts.user_id = users.id
         left join post_category on posts.id = post_category.post_id
         left join categories on post_category.category_id = categories.id
         where users.username = '${username}'
+        group by posts.id
+        order by publication_date desc
+        limit ${offset}, ${config.listPerPage}`
+    );
+
+    const data = helper.emptyOrRows(rows);
+    const meta = { page };
+
+    return {
+        data,
+        meta
+    }
+}
+
+async function getForeignUser(username, page = 1) {
+    const offset = helper.getOffset(page, config.listPerPage);
+    const rows = await db.query(
+        `select posts.id, title, summary, posts.text, user_id, username, rating, relationship, publication_date,
+        group_concat(cat_name separator ',') as categories_list
+        from posts
+        inner join users on posts.user_id = users.id
+        left join post_category on posts.id = post_category.post_id
+        left join categories on post_category.category_id = categories.id
+        where users.username = '${username}' AND posts.is_draft = 0
         group by posts.id
         order by publication_date desc
         limit ${offset}, ${config.listPerPage}`
@@ -52,7 +77,7 @@ async function getByCategory(category, page = 1) {
         ON posts.id = post_category.post_id
         INNER JOIN categories 
         ON categories.id = post_category.category_id
-        WHERE categories.cat_name = '${category}'
+        WHERE categories.cat_name = '${category}' AND posts.is_draft = 0
         ORDER BY publication_date DESC
         LIMIT ${offset}, ${config.listPerPage}`
     );
@@ -68,8 +93,8 @@ async function getByCategory(category, page = 1) {
 
 async function insertOne(post) {
     const result = await db.query(
-        `INSERT INTO posts (title, summary, text, user_id, rating, relationship)
-        VALUES ('${post.title}', '${post.summary}', "${post.text}", '${post.user_id}', '${post.rating}', '${post.relationship}')`
+        `INSERT INTO posts (title, summary, text, user_id, rating, relationship, is_draft)
+        VALUES ('${post.title}', '${post.summary}', "${post.text}", '${post.user_id}', '${post.rating}', '${post.relationship}', ${post.is_draft})`
     );
 
     const post_id = result.insertId;
@@ -111,19 +136,14 @@ async function searchByTextAndCategories(text, categories_list) {
         left join post_category on posts.id = post_category.post_id
         left join categories on post_category.category_id = categories.id
         where (LOWER(posts.title) LIKE LOWER('%${text}%'))` + (categories_list.length > 0 ? `and (post_category.category_id in (${categories_list.map(cat => cat.id).join(',')}))`:"")+
-        `group by posts.id
+        ` and posts.is_draft = 0
+        group by posts.id 
         order by publication_date desc;`
     );
 
     const data = helper.emptyOrRows(rows);
-    //const meta = { page };
-
-    // return {
-    //     data,
-    //     meta
-    // }
 
     return data;
 }
 
-module.exports = { getByUsername, getByCategory, getMultiple, insertOne, deleteById, getById, searchByTextAndCategories }
+module.exports = { getByUsername, getByCategory, getMultiple, insertOne, deleteById, getById, searchByTextAndCategories, getForeignUser }

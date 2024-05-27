@@ -81,7 +81,7 @@ function Profile() {
                     <HashLoader color="#6495ed" className='spinner' />
                 </div> :
                 <div className='postsWrap'>
-                    {posts?.map(post => <div className='postItem' key={post.id}>
+                    {posts?.filter(post => !post.is_draft).map(post => <div className='postItem' key={post.id}>
                         <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
                         <p>Author: <Link to={`/user/${user?.username}`}>{user?.username}</Link></p>
                         <p>Rating: {post.rating}</p>
@@ -104,7 +104,19 @@ function Profile() {
             </div> </> : 
             
             tableName === "drafts" ? 
-            <>Drafts</> :
+            <>
+            <div className='postsWrap'>
+                    {posts?.filter(post => post.is_draft).map(post => <div className='postItem' key={post.id}>
+                        <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
+                        <p>Author: <Link to={`/user/${user?.username}`}>{user?.username}</Link></p>
+                        <p>Rating: {post.rating}</p>
+                        <p>Relationship: {post.relationship}</p>
+                        <p>Categories: {post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
+                        <p>Summary: {post.summary}</p>
+                        <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
+                    </div>)}
+                </div>
+            </> :
 
             tableName === "comments" ?
             <>Comments</> : <>Error</>

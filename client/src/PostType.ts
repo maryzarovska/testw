@@ -7,5 +7,6 @@ export type Post = {
     username: string,
     rating: string,
     relationship: string,
-    categories_list: string
+    categories_list: string,
+    is_draft: boolean
 }

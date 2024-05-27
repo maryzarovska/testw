@@ -16,6 +16,13 @@ router.get("/get-posts-by-username/:username", async function(req, res, next) {
     }, 1000);
 });
 
+router.get("/get-posts-by-username-foreign-user/:username", async function(req, res, next) {
+    const username = req.params.username;
+    setTimeout(async () => {
+        res.json(await posts.getForeignUser(username));
+    }, 1000);
+});
+
 router.delete("/posts/:id", passport.authenticate('jwt', { session: false }), async (req, res, next) => {
     res.json(await posts.deleteById(req.params.id, req.user));
 })

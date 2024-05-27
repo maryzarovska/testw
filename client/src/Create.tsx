@@ -4,7 +4,6 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { Alignment } from '@ckeditor/ckeditor5-alignment';
 
 function Create() {
     const [categories, setCategories] = useState<{ id: number, cat_name: string }[]>([])
@@ -17,9 +16,10 @@ function Create() {
     const [relationship, setRelationship] = useState("")
     const [selectedCategories, setSelectedCategories] = useState<{ id: number, cat_name: string }[]>([]);
     const [summary, setSummary] = useState("");
+    const [draft, setDraft] = useState(false);
 
     function create() {
-        axios.post("/api/create-post", { title, summary, text, user_id: user.id, rating, relationship, categories: selectedCategories }, { headers: { "Authorization": localStorage.getItem("token") } })
+        axios.post("/api/create-post", { title, summary, text, user_id: user.id, rating, relationship, categories: selectedCategories, is_draft: draft }, { headers: { "Authorization": localStorage.getItem("token") } })
 
     }
 
@@ -111,10 +111,12 @@ function Create() {
                     ]
 
                 }}
+                
             ></CKEditor>
-            <textarea name="" id="" cols={80} rows={20} placeholder="Content" className="text" value={text} onChange={event => setText(event.target.value)}></textarea>
+            {/* <textarea name="" id="" cols={80} rows={20} placeholder="Content" className="text" value={text} onChange={event => setText(event.target.value)}></textarea> */}
         </form>
 
+        <input type="checkbox" onChange={event => {setDraft(event.target.checked)}} checked={draft}/> Save as draft <br /> <br />
         <button type="button" onClick={create}>Create</button>
     </>);
 }
