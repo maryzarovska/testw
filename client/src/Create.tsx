@@ -95,28 +95,40 @@ function Create() {
             <br />
             <input type="text" placeholder="Title" className="title" value={title} onChange={event => setTitle(event.target.value)} /> <br /> <br />
             <textarea name="" id="" cols={80} rows={7} placeholder="Summary" className="summary" value={summary} onChange={event => setSummary(event.target.value)}></textarea> <br /><br />
-            <CKEditor
-                editor={ClassicEditor}
-                config={{
-                    // plugins: [
-                    //     Alignment
-                    // ],
-                    toolbar: [
-                        'undo', 'redo',
-                        '|', 'heading',
-                        '|', 'bold', 'italic', 'strikethrough',
-                        '|', 'alignment',
-                        '|', 'link', 'blockQuote',
-                        '|', 'bulletedList', 'numberedList', 'outdent', 'indent'
-                    ]
-
-                }}
-                
-            ></CKEditor>
+            <div className="ckeditor-wrap">
+                <CKEditor
+                    editor={ClassicEditor}
+                    config={{
+                        // plugins: [
+                        //     Alignment
+                        // ],
+                        toolbar: [
+                            'undo', 'redo',
+                            '|', 'heading',
+                            '|', 'bold', 'italic', 'strikethrough',
+                            '|', 'alignment',
+                            '|', 'link', 'blockQuote',
+                            '|', 'bulletedList', 'numberedList', 'outdent', 'indent'
+                        ]
+                    }}
+                    onReady={editor => {
+                        editor.editing.view.change((writer) => {
+                            let root= editor.editing.view.document.getRoot();
+                            if (root !== null) {
+                                writer.setStyle(
+                                    "height",
+                                    "500px",
+                                    root
+                                );
+                            }
+                        });
+                    }}
+                ></CKEditor>
+            </div>
             {/* <textarea name="" id="" cols={80} rows={20} placeholder="Content" className="text" value={text} onChange={event => setText(event.target.value)}></textarea> */}
         </form>
 
-        <input type="checkbox" onChange={event => {setDraft(event.target.checked)}} checked={draft}/> Save as draft <br /> <br />
+        <input type="checkbox" onChange={event => { setDraft(event.target.checked) }} checked={draft} /> Save as draft <br /> <br />
         <button type="button" onClick={create}>Create</button>
     </>);
 }

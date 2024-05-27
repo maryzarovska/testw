@@ -36,3 +36,12 @@
     border-radius: 3px;
     margin: 5px;
 }
+
+.ckeditor-wrap {
+    display: flex;
+    justify-content: center;
+}
+
+.ckeditor-wrap > *{
+    min-width: 60%;
+}
