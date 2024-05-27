@@ -4,8 +4,10 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { useParams } from "react-router-dom";
 
 function Create() {
+    const params = useParams();
     const [categories, setCategories] = useState<{ id: number, cat_name: string }[]>([])
     let relationships = ["Gen", "F/M", "F/F", "M/M", "Multi"]
     let ratings = ["G (General Audience)", "T (Teen and Up Audience)", "M (Mature)", "E (Explicit)"]
@@ -24,9 +26,14 @@ function Create() {
     }
 
     useEffect(() => {
+        if (params.id) {
+            axios.get<{ id: number, cat_name: string }[]>(`/api/posts/${params.id}`).then(response => {
+                console.log(response.data);
+            });
+        }
         axios.get<{ id: number, cat_name: string }[]>("/api/categories/all").then(response => {
             setCategories(response.data)
-        })
+        });
     }, [])
 
     function toSelect(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -113,7 +120,7 @@ function Create() {
                     }}
                     onReady={editor => {
                         editor.editing.view.change((writer) => {
-                            let root= editor.editing.view.document.getRoot();
+                            let root = editor.editing.view.document.getRoot();
                             if (root !== null) {
                                 writer.setStyle(
                                     "height",
