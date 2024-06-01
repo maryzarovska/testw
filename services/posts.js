@@ -124,6 +124,16 @@ async function getById(id) {
         `SELECT * FROM posts WHERE id = ${id}`
     );
     if (post) {
+        const post_id = post[0].id;
+        const categories = await db.query(
+            `SELECT categories.id, categories.cat_name FROM categories
+            INNER JOIN post_category
+            ON categories.id = post_category.category_id
+            WHERE post_category.post_id = ${post_id}`
+        );
+        post[0].categories = categories;
+    }
+    if (post) {
         return post[0];
     } else return null;
 }
@@ -135,7 +145,7 @@ async function searchByTextAndCategories(text, categories_list) {
         inner join users on posts.user_id = users.id
         left join post_category on posts.id = post_category.post_id
         left join categories on post_category.category_id = categories.id
-        where (LOWER(posts.title) LIKE LOWER('%${text}%'))` + (categories_list.length > 0 ? `and (post_category.category_id in (${categories_list.map(cat => cat.id).join(',')}))`:"")+
+        where (LOWER(posts.title) LIKE LOWER('%${text}%'))` + (categories_list.length > 0 ? `and (post_category.category_id in (${categories_list.map(cat => cat.id).join(',')}))` : "") +
         ` and posts.is_draft = 0
         group by posts.id 
         order by publication_date desc;`
