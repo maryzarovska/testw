@@ -31,6 +31,11 @@ function Create() {
     }
 
     function edit() {
+        axios.put(`/api/posts/edit/${params.id}`, {
+            title, summary, text, rating, relationship, categories: selectedCategories, is_draft: draft
+        }, {
+            headers: { "Authorization": localStorage.getItem("token") }
+        });
     }
 
     useEffect(() => {

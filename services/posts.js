@@ -156,4 +156,12 @@ async function searchByTextAndCategories(text, categories_list) {
     return data;
 }
 
-module.exports = { getByUsername, getByCategory, getMultiple, insertOne, deleteById, getById, searchByTextAndCategories, getForeignUser }
+async function updatePost(id, post) {
+    const update = await db.query(
+        `UPDATE posts 
+        SET title = ${post.title}, summary = ${post.summary}, text = ${post.text}, rating = ${post.rating}, relationship = ${post.relationship}
+        WHERE posts.id = ${id};`
+    )
+}
+
+module.exports = { getByUsername, getByCategory, getMultiple, insertOne, deleteById, getById, searchByTextAndCategories, getForeignUser, updatePost }

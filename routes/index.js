@@ -56,6 +56,16 @@ router.get("/posts/edit/:id", passport.authenticate('jwt', { session: false }), 
     }
 })
 
+router.put("/posts/edit/:id", passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+    let post = await posts.getById(req.params.id);
+    if (post && post.user_id === req.user.id) {
+        await posts.updatePost(req.params.id, req.body);
+        res.sendStatus(200);
+    } else {
+        res.status(400).json({});
+    }
+})
+
 router.get("/comments/:postId", async (req, res, next) => {
     res.json(await comments.getByPostId(req.params.postId))
 })
