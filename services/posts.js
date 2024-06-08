@@ -159,9 +159,25 @@ async function searchByTextAndCategories(text, categories_list) {
 async function updatePost(id, post) {
     const update = await db.query(
         `UPDATE posts 
-        SET title = ${post.title}, summary = ${post.summary}, text = ${post.text}, rating = ${post.rating}, relationship = ${post.relationship}
-        WHERE posts.id = ${id};`
-    )
+        SET title = ?, summary = ?, text = ?, rating = ?, relationship = ?
+        WHERE posts.id = ?;`, [post.title, post.summary, post.text, post.rating, post.relationship, id]
+    );
+
+    await db.query(
+        `DELETE FROM post_category WHERE post_id = ?`, [id]
+    );
+
+    const pairs = [];
+    for (let category of post.categories) {
+        pairs.push(`(${id}, ${category.id})`);
+    }
+
+    await db.query(
+        `INSERT INTO post_category (post_id, category_id)
+        VALUES ${pairs.join(', ')}`
+    );
+
+    return update;
 }
 
 module.exports = { getByUsername, getByCategory, getMultiple, insertOne, deleteById, getById, searchByTextAndCategories, getForeignUser, updatePost }

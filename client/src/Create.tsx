@@ -27,6 +27,13 @@ function Create() {
             title, summary, text, user_id: user.id, rating, relationship, categories: selectedCategories, is_draft: draft
         }, {
             headers: { "Authorization": localStorage.getItem("token") }
+        }).then(response => {
+            if (response.status === 200) {
+                alert("Post created!");
+                navigate("/profile");
+            } else {
+                alert("Error on post creating!");
+            }
         });
     }
 
@@ -35,6 +42,13 @@ function Create() {
             title, summary, text, rating, relationship, categories: selectedCategories, is_draft: draft
         }, {
             headers: { "Authorization": localStorage.getItem("token") }
+        }).then(response => {
+            if (response.status === 200) {
+                alert("Post updated!");
+                navigate("/profile");
+            } else {
+                alert("Error on post updating!");
+            }
         });
     }
 
