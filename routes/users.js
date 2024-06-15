@@ -3,6 +3,10 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 var router = express.Router();
 
+const { storage } = require('../storage/storage');
+const multer = require('multer');
+const upload = multer({ storage });
+
 const users = require('../services/users');
 const config = require('../config');
 require('../config/passport-config')(passport, users.getByUsername, users.insertOne);
@@ -57,5 +61,10 @@ router.get('/profile/:username', async (req, res, next) => {
     await users.getUserData(req.params.username)
   )
 })
+
+router.post('/upload-profile-image', upload.single('image'), (req, res) => {
+  console.log(req.file);
+  res.send('Done');
+});
 
 module.exports = router;
