@@ -14,6 +14,13 @@ function Profile() {
     const modal = React.useRef<HTMLDivElement>(null)
     const [idToDelete, setIdToDelete] = React.useState<number | null>()
     const [tableName, setTableName] = React.useState<"published works" | "drafts" | "comments">("published works");
+    const [file, setFile] = React.useState<File | null>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+          setFile(e.target.files[0]);
+        }
+      };
 
     React.useEffect(() => {
         axios.get("/api/users/profile", {
@@ -61,12 +68,39 @@ function Profile() {
         }
     }
 
+    function sendPhoto() {
+        console.log(file);
+        
+        if (file) {
+            console.log("Uploading file...");
+        
+            const formData = new FormData();
+            formData.append("image", file);
+        
+            try {
+              // You can write the URL of your server or any other endpoint used for file upload
+              const result = axios.post("/api/users/upload-profile-image", formData).then(response => {
+                  console.log(response.data);
+
+              })
+            } catch (error) {
+              console.error(error);
+            }
+          }
+    }
+
     return (
         <>
             <h1>Profile</h1>
             <div className='info'><div className='posUser'><h3>Username: </h3> {user?.username}</div> <br />
             <div className='posUser'><h3>Name: </h3> {user?.name}</div> <br />
-            <div className='create'><Link to="/create-work">&#128934; Create a new work</Link></div></div>
+            <div className='create'><Link to="/create-work">&#128934; Create a new work</Link></div><div>
+                <input type="file" onChange={handleFileChange} /><br />
+                <button style={{width: 'auto'}} onClick={sendPhoto}>Change photo</button>
+            </div></div>
+            
+            
+            
             <div id='navP'>
                 <span className={tableName === "published works" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("published works")}>Published Works</span>
                 <span className={tableName === "drafts" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("drafts")}>Drafts</span>
