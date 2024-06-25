@@ -8,7 +8,7 @@ import { Post } from './PostType';
 
 function Profile() {
 
-    const [user, setUser] = React.useState<{ id: number, username: string, name: string }>()
+    const [user, setUser] = React.useState<{ id: number, username: string, name: string, image_path: string | null | undefined }>()
     const [loading, setLoading] = React.useState<boolean>(true)
     const [posts, setPosts] = React.useState<Post[]>()
     const modal = React.useRef<HTMLDivElement>(null)
@@ -18,14 +18,16 @@ function Profile() {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-          setFile(e.target.files[0]);
+            setFile(e.target.files[0]);
         }
-      };
+    };
 
     React.useEffect(() => {
         axios.get("/api/users/profile", {
             headers: { "Authorization": localStorage.getItem("token") }
         }).then(async response => {
+            console.log(response.data.user);
+            
             setUser(response.data.user);
 
             let responsePosts = await axios.get<{ data: Post[], meta: any }>(`/api/get-posts-by-username/${response.data.user.username}`)
@@ -70,91 +72,103 @@ function Profile() {
 
     function sendPhoto() {
         console.log(file);
-        
+
         if (file) {
             console.log("Uploading file...");
-        
+
             const formData = new FormData();
             formData.append("image", file);
-        
-            try {
-              // You can write the URL of your server or any other endpoint used for file upload
-              const result = axios.post("/api/users/upload-profile-image", formData).then(response => {
-                  console.log(response.data);
 
-              })
+            try {
+                // You can write the URL of your server or any other endpoint used for file upload
+                const result = axios.post("/api/users/upload-profile-image", formData, {
+                    headers: {
+                        'Authorization': localStorage.getItem('token')
+                    }
+                }).then(response => {
+                    if (user)
+                        setUser({ ...user, image_path: response.data.imagePath });
+                    console.log(response.data);
+                })
             } catch (error) {
-              console.error(error);
+                console.error(error);
             }
-          }
+        }
     }
 
     return (
         <>
             <h1>Profile</h1>
             <div className='info'><div className='posUser'><h3>Username: </h3> {user?.username}</div> <br />
-            <div className='posUser'><h3>Name: </h3> {user?.name}</div> <br />
-            <div className='create'><Link to="/create-work">&#128934; Create a new work</Link></div><div>
-                <input type="file" onChange={handleFileChange} /><br />
-                <button style={{width: 'auto'}} onClick={sendPhoto}>Change photo</button>
-            </div></div>
-            
-            
-            
+                <div className='posUser'><h3>Name: </h3> {user?.name}</div> <br />
+                <div className='create'><Link to="/create-work">&#128934; Create a new work</Link></div><div>
+                    {user?.image_path ?
+                        <>
+                            <img src={user?.image_path} alt={user.name} /><br />
+                        </>
+                        :
+                        <></>
+                    }
+                    <input type="file" onChange={handleFileChange} /><br />
+                    <button style={{ width: 'auto' }} onClick={sendPhoto}>Change photo</button>
+                </div></div>
+
+
+
             <div id='navP'>
                 <span className={tableName === "published works" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("published works")}>Published Works</span>
                 <span className={tableName === "drafts" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("drafts")}>Drafts</span>
                 <span className={tableName === "comments" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("comments")}>Comments</span>
 
-        
+
             </div>
-            
+
             {tableName === "published works" ? <>
-            {loading ?
-                <div className='spinnerWrap'>
-                    <HashLoader color="#6495ed" className='spinner' />
-                </div> :
-                <div className='postsWrap'>
-                    {posts?.filter(post => !post.is_draft).map(post => <div className='postItem' key={post.id}>
-                        <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
-                        <p>Author: <Link to={`/user/${user?.username}`}>{user?.username}</Link></p>
-                        <p>Rating: {post.rating}</p>
-                        <p>Relationship: {post.relationship}</p>
-                        <p>Categories: {post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
-                        <p>Summary: {post.summary}</p>
-                        <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
-                        <Link to={`/edit/${post.id}`} className='navIt'>Edit</Link>
-                    </div>)}
-                </div>
-            }
+                {loading ?
+                    <div className='spinnerWrap'>
+                        <HashLoader color="#6495ed" className='spinner' />
+                    </div> :
+                    <div className='postsWrap'>
+                        {posts?.filter(post => !post.is_draft).map(post => <div className='postItem' key={post.id}>
+                            <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
+                            <p>Author: <Link to={`/user/${user?.username}`}>{user?.username}</Link></p>
+                            <p>Rating: {post.rating}</p>
+                            <p>Relationship: {post.relationship}</p>
+                            <p>Categories: {post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
+                            <p>Summary: {post.summary}</p>
+                            <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
+                            <Link to={`/edit/${post.id}`} className='navIt'>Edit</Link>
+                        </div>)}
+                    </div>
+                }
 
-            <div className='modal' ref={modal} onClick={cancelClick}>
-                <div className='modalData' onClick={event => event.stopPropagation()}>
-                    <h2>Delete post</h2>
-                    <p>Are you sure you want to delete this post?</p>
-                    <p>You won't be able to restore it.</p>
-                    <button className='button2' id='correct' onClick={deleteAccept}>Yes</button>
-                    <button className='button2' id='cancel' onClick={cancelClick}>Cancel</button>
-                </div>
-            </div> </> : 
-            
-            tableName === "drafts" ? 
-            <>
-            <div className='postsWrap'>
-                    {posts?.filter(post => post.is_draft).map(post => <div className='postItem' key={post.id}>
-                        <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
-                        <p>Author: <Link to={`/user/${user?.username}`}>{user?.username}</Link></p>
-                        <p>Rating: {post.rating}</p>
-                        <p>Relationship: {post.relationship}</p>
-                        <p>Categories: {post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
-                        <p>Summary: {post.summary}</p>
-                        <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
-                    </div>)}
-                </div>
-            </> :
+                <div className='modal' ref={modal} onClick={cancelClick}>
+                    <div className='modalData' onClick={event => event.stopPropagation()}>
+                        <h2>Delete post</h2>
+                        <p>Are you sure you want to delete this post?</p>
+                        <p>You won't be able to restore it.</p>
+                        <button className='button2' id='correct' onClick={deleteAccept}>Yes</button>
+                        <button className='button2' id='cancel' onClick={cancelClick}>Cancel</button>
+                    </div>
+                </div> </> :
 
-            tableName === "comments" ?
-            <>Comments</> : <>Error</>
+                tableName === "drafts" ?
+                    <>
+                        <div className='postsWrap'>
+                            {posts?.filter(post => post.is_draft).map(post => <div className='postItem' key={post.id}>
+                                <h4><Link to={`/posts/${post.id}`}>{post.title}</Link></h4>
+                                <p>Author: <Link to={`/user/${user?.username}`}>{user?.username}</Link></p>
+                                <p>Rating: {post.rating}</p>
+                                <p>Relationship: {post.relationship}</p>
+                                <p>Categories: {post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
+                                <p>Summary: {post.summary}</p>
+                                <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
+                            </div>)}
+                        </div>
+                    </> :
+
+                    tableName === "comments" ?
+                        <>Comments</> : <>Error</>
             }
 
         </>

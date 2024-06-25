@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 var router = express.Router();
 
+const cloudinary = require('cloudinary').v2;
+
 const { storage } = require('../storage/storage');
 const multer = require('multer');
 const upload = multer({ storage });
@@ -49,10 +51,10 @@ router.post('/signin', async (req, res, next) => {
   })(req, res, next);
 });
 
-router.get('/profile', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+router.get('/profile', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   res.json({
     message: 'You made it to the secure route',
-    user: req.user
+    user: await users.getByUsername(req.user.username)
   });
 });
 
@@ -62,9 +64,17 @@ router.get('/profile/:username', async (req, res, next) => {
   )
 })
 
-router.post('/upload-profile-image', upload.single('image'), (req, res) => {
+router.post('/upload-profile-image', passport.authenticate('jwt', { session: false }), upload.single('image'), async (req, res) => {
+  let user = await users.getByUsername(req.user.username);
   console.log(req.file);
-  res.send('Done');
+  if (user && user.image_path) {
+    let temp = user.image_path.split('/');
+    let resName = 'testw/' + temp[temp.length - 1].split('.')[0];
+    let delResult = await cloudinary.api.delete_resources([resName]);
+    console.log(delResult);
+  }
+  users.updateImage(user.id, req.file.path);
+  res.send({imagePath: req.file.path});
 });
 
 module.exports = router;
