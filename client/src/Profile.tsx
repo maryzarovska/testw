@@ -27,6 +27,10 @@ function Profile() {
             headers: { "Authorization": localStorage.getItem("token") }
         }).then(async response => {
             console.log(response.data.user);
+
+            let temp: string[] = response.data.user.image_path.split('/');
+            temp.splice(temp.indexOf('upload') + 1, 0, 'c_fill,h_60,w_60');
+            response.data.user.image_path = temp.join('/');
             
             setUser(response.data.user);
 
@@ -86,8 +90,12 @@ function Profile() {
                         'Authorization': localStorage.getItem('token')
                     }
                 }).then(response => {
-                    if (user)
+                    if (user) {
+                        let temp: string[] = response.data.imagePath.split('/');
+                        temp.splice(temp.indexOf('upload') + 1, 0, 'c_fill,h_60,w_60');
+                        response.data.imagePath = temp.join('/');
                         setUser({ ...user, image_path: response.data.imagePath });
+                    }
                     console.log(response.data);
                 })
             } catch (error) {
