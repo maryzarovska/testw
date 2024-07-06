@@ -15,6 +15,7 @@ import Login from './Login';
 import Profile from './Profile';
 import Logout from './Logout';
 import User from './User';
+import Settings from './Settings';
 
 import store from './application-store/store';
 import Create from './Create';
@@ -82,6 +83,11 @@ const router = createBrowserRouter([{
     {
       path: "edit/:id",
       element: <Create />
+    },
+
+    {
+      path: "settings",
+      element: <Settings />
     }
   ]
 }])

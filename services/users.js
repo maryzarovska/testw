@@ -56,10 +56,21 @@ async function updateImage(id, imagePath) {
     return data.length > 0 ? data[0] : null;
 }
 
+async function updateUser(id, username, name) {
+    const rows = await db.query (
+        `UPDATE users SET username = ?, name = ? WHERE id = ?`, [username, name, id]
+    );
+
+    const data = helper.emptyOrRows(rows);
+
+    return data.length > 0 ? data[0] : null;
+}
+
 module.exports = {
     getMultiple,
     getByUsername,
     insertOne,
     getUserData,
-    updateImage
+    updateImage,
+    updateUser
 }

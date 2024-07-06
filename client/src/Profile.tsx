@@ -31,7 +31,7 @@ function Profile() {
             let temp: string[] = response.data.user.image_path.split('/');
             temp.splice(temp.indexOf('upload') + 1, 0, 'c_fill,h_60,w_60');
             response.data.user.image_path = temp.join('/');
-            
+
             setUser(response.data.user);
 
             let responsePosts = await axios.get<{ data: Post[], meta: any }>(`/api/get-posts-by-username/${response.data.user.username}`)
@@ -107,19 +107,24 @@ function Profile() {
     return (
         <>
             <h1>Profile</h1>
-            <div className='info'><div className='posUser'><h3>Username: </h3> {user?.username}</div> <br />
+            <div className='info-img'>
+                {user?.image_path ?
+                    <>
+                        <img src={user?.image_path} alt={user.name} /><br />
+                    </>
+                    :
+                    <></>
+                }
+                <input type="file" onChange={handleFileChange} /><br />
+                <button style={{ width: 'auto' }} onClick={sendPhoto}>Change photo</button>
+            </div>
+            <div className='info'>
+                <div className='posUser'><h3>Username: </h3> {user?.username}</div> <br />
                 <div className='posUser'><h3>Name: </h3> {user?.name}</div> <br />
-                <div className='create'><Link to="/create-work">&#128934; Create a new work</Link></div><div>
-                    {user?.image_path ?
-                        <>
-                            <img src={user?.image_path} alt={user.name} /><br />
-                        </>
-                        :
-                        <></>
-                    }
-                    <input type="file" onChange={handleFileChange} /><br />
-                    <button style={{ width: 'auto' }} onClick={sendPhoto}>Change photo</button>
-                </div></div>
+                <div className='create'><Link to="/create-work">&#128934; Create a new work</Link></div>
+                <div className='create'><Link to="/settings">Edit Profile</Link></div>
+
+            </div>
 
 
 
