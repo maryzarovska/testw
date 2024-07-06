@@ -10,6 +10,7 @@ function Settings() {
     const [username, setUsername] = React.useState<string>();
     const [name, setName] = React.useState<string>();
     const [file, setFile] = React.useState<File | null>(null);
+    const [errorMessage, setErrorMessage] = React.useState<string>('');
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -24,6 +25,10 @@ function Settings() {
             }
         }).then(response => {
             console.log(response.data);
+            localStorage.setItem('token', `Bearer ${response.data.token}`);
+        }).catch(error => {
+            setErrorMessage(error.response.data.message);
+            console.log(error.response.data.message);
         })
     }
 
@@ -76,6 +81,9 @@ function Settings() {
 
     return (
         <>
+        {errorMessage ?
+        <>{errorMessage}</> :
+        <></>}
             <div className='info-settings'>
                 <div className='posUser'><h3>Username: </h3> <input type="text" onChange={event => setUsername(event.target.value)} value={username} /></div> <br />
                 <div className='posUser'><h3>Name: </h3> <input type="text" onChange={event => setName(event.target.value)} value={name} /> </div> <br />

@@ -80,8 +80,15 @@ router.post('/upload-profile-image', passport.authenticate('jwt', { session: fal
 router.put('/update-profile-info', passport.authenticate('jwt', { session: false }), async (req, res) => {
   let user = await users.getByUsername(req.user.username);
   if (user) {
-    await users.updateUser(user.id, req.body.username, req.body.name);
-    res.sendStatus(200);
+    users.updateUser(user.id, req.body.username, req.body.name).then(data => {
+      console.log(data);
+      const userData = { id: user.id, username: req.body.username };
+      const token = jwt.sign({ user: userData }, config.jwtSecret);
+      res.status(200).send({token, userData});
+    }).catch(err => {
+      console.log(err);
+      res.status(400).send({message: 'This username is already taken!'});
+    });
   }
   else 
     res.sendStatus(400);
