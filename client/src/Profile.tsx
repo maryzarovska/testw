@@ -115,8 +115,6 @@ function Profile() {
                     :
                     <></>
                 }
-                <input type="file" onChange={handleFileChange} /><br />
-                <button style={{ width: 'auto' }} onClick={sendPhoto}>Change photo</button>
             </div>
             <div className='info'>
                 <div className='posUser'><h3>Username: </h3> {user?.username}</div> <br />

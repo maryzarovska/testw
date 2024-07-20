@@ -32,6 +32,10 @@ function Settings() {
         })
     }
 
+    function changePassword() {
+        
+    }
+
     function sendPhoto() {
         console.log(file);
 
@@ -88,6 +92,7 @@ function Settings() {
                 <div className='posUser'><h3>Username: </h3> <input type="text" onChange={event => setUsername(event.target.value)} value={username} /></div> <br />
                 <div className='posUser'><h3>Name: </h3> <input type="text" onChange={event => setName(event.target.value)} value={name} /> </div> <br />
                 <button style={{ width: 'auto' }} onClick={saveChanges}>Save changes</button>
+                <button style={{ width: 'auto' }} onClick={changePassword}>Change password</button>
 
             </div>
 
