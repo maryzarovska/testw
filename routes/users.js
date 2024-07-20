@@ -1,6 +1,17 @@
 var express = require('express');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+  host: 'sandbox.smtp.mailtrap.io',
+  port: 2525,
+  auth: {
+    user: '9291827ec6778c',
+    pass: '4607d0c5b444f9'
+  }
+});
+
 var router = express.Router();
 
 const cloudinary = require('cloudinary').v2;
@@ -74,7 +85,7 @@ router.post('/upload-profile-image', passport.authenticate('jwt', { session: fal
     console.log(delResult);
   }
   users.updateImage(user.id, req.file.path);
-  res.send({imagePath: req.file.path});
+  res.send({ imagePath: req.file.path });
 });
 
 router.put('/update-profile-info', passport.authenticate('jwt', { session: false }), async (req, res) => {
@@ -84,14 +95,33 @@ router.put('/update-profile-info', passport.authenticate('jwt', { session: false
       console.log(data);
       const userData = { id: user.id, username: req.body.username };
       const token = jwt.sign({ user: userData }, config.jwtSecret);
-      res.status(200).send({token, userData});
+      res.status(200).send({ token, userData });
     }).catch(err => {
       console.log(err);
-      res.status(400).send({message: 'This username is already taken!'});
+      res.status(400).send({ message: 'This username is already taken!' });
     });
   }
-  else 
+  else
     res.sendStatus(400);
-})
+});
+
+router.get('/send-test-email', (req, res, next) => {
+  const mailOptions = {
+    from: 'The Idea project',
+    to: 'andrijpopow07@gmail.com',
+    subject: 'My first Email!!!',
+    text: "This is my first email. I am so excited!"
+  };
+  transporter.sendMail(mailOptions, (err, info) => {
+    if (err) {
+      console.log('Error:');
+      console.log(err);
+    } else if (info) {
+      console.log('Info:')
+      console.log(info);
+    }
+  });
+  res.sendStatus(200);
+});
 
 module.exports = router;
