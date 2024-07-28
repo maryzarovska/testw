@@ -105,23 +105,27 @@ router.put('/update-profile-info', passport.authenticate('jwt', { session: false
     res.sendStatus(400);
 });
 
-router.get('/send-test-email', (req, res, next) => {
-  const mailOptions = {
-    from: 'The Idea project',
-    to: 'andrijpopow07@gmail.com',
-    subject: 'My first Email!!!',
-    text: "This is my first email. I am so excited!"
-  };
-  transporter.sendMail(mailOptions, (err, info) => {
-    if (err) {
-      console.log('Error:');
-      console.log(err);
-    } else if (info) {
-      console.log('Info:')
-      console.log(info);
-    }
-  });
-  res.sendStatus(200);
+router.get('/send-reset-password', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  let user = await users.getByUsername(req.user.username);
+  if(user) {
+    const mailOptions = {
+      from: 'The Idea project',
+      to: `${user.email}`,
+      subject: 'Password Reset',
+      text: "Click below to reset your password"
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log('Cannot send an email, error: ');
+        console.log(err);
+      } else if (info) {
+        console.log('Info: ')
+        console.log(info);
+      }
+    });
+    res.sendStatus(200);
+  }
 });
 
 module.exports = router;

@@ -66,6 +66,10 @@ async function updateUser(id, username, name) {
     return data.length > 0 ? data[0] : null;
 }
 
+async function createQueryToResetPassword(id) {
+    crypto.getRandomValues()
+}
+
 module.exports = {
     getMultiple,
     getByUsername,
