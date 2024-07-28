@@ -33,7 +33,13 @@ function Settings() {
     }
 
     function changePassword() {
-        
+        axios.get("/api/users/send-reset-password", {
+            headers: {
+                'Authorization': localStorage.getItem('token')
+            }
+        }).then(response => {
+            console.log(response.data);
+        })
     }
 
     function sendPhoto() {

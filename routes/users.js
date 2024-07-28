@@ -108,6 +108,8 @@ router.put('/update-profile-info', passport.authenticate('jwt', { session: false
 router.get('/send-reset-password', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let user = await users.getByUsername(req.user.username);
   if(user) {
+    let result = await users.createQueryToResetPassword(user.id);
+
     const mailOptions = {
       from: 'The Idea project',
       to: `${user.email}`,
@@ -115,15 +117,15 @@ router.get('/send-reset-password', passport.authenticate('jwt', { session: false
       text: "Click below to reset your password"
     };
 
-    transporter.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.log('Cannot send an email, error: ');
-        console.log(err);
-      } else if (info) {
-        console.log('Info: ')
-        console.log(info);
-      }
-    });
+    // transporter.sendMail(mailOptions, (err, info) => {
+    //   if (err) {
+    //     console.log('Cannot send an email, error: ');
+    //     console.log(err);
+    //   } else if (info) {
+    //     console.log('Info: ')
+    //     console.log(info);
+    //   }
+    // });
     res.sendStatus(200);
   }
 });

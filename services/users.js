@@ -2,6 +2,8 @@ const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
 
+const genRandHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+
 async function getMultiple(page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
@@ -67,7 +69,13 @@ async function updateUser(id, username, name) {
 }
 
 async function createQueryToResetPassword(id) {
-    crypto.getRandomValues()
+    let randHex = genRandHex(32);
+
+    await db.query (
+        `UPDATE users SET password_change_url = ?, password_change_url_datetime = ? WHERE id = ?`, [randHex, new Date().toISOString().slice(0, 19).replace('T', ' '), id]
+    );
+
+    return randHex;
 }
 
 module.exports = {
@@ -76,5 +84,6 @@ module.exports = {
     insertOne,
     getUserData,
     updateImage,
-    updateUser
+    updateUser,
+    createQueryToResetPassword
 }
