@@ -114,18 +114,18 @@ router.get('/send-reset-password', passport.authenticate('jwt', { session: false
       from: 'The Idea project',
       to: `${user.email}`,
       subject: 'Password Reset',
-      text: "Click below to reset your password"
+      text: `Click below to reset your password<br><a href="http://localhost:3000/reset-password/${result}"></a>`
     };
 
-    // transporter.sendMail(mailOptions, (err, info) => {
-    //   if (err) {
-    //     console.log('Cannot send an email, error: ');
-    //     console.log(err);
-    //   } else if (info) {
-    //     console.log('Info: ')
-    //     console.log(info);
-    //   }
-    // });
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.log('Cannot send an email, error: ');
+        console.log(err);
+      } else if (info) {
+        console.log('Info: ')
+        console.log(info);
+      }
+    });
     res.sendStatus(200);
   }
 });
