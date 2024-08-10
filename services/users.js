@@ -88,7 +88,8 @@ async function validateResetPasswordCode(resetCode) {
     if(data.length != 0) {
         const userData = data[0];
         
-        
+        let codeDateTime = new Date(new Date(userData.password_change_url_datetime).getTime() - new Date().getTimezoneOffset() * 60 * 1000);
+        let currentDateTime = new Date();
 
         return true;
     }
