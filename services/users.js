@@ -7,7 +7,7 @@ const genRandHex = size => [...Array(size)].map(() => Math.floor(Math.random() *
 async function getMultiple(page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);
     const rows = await db.query(
-        `SELECT id, username, password, name, image_path FROM users LIMIT ${offset}, ${config.listPerPage}`
+        `SELECT id, username, password, name, image_path, email FROM users LIMIT ${offset}, ${config.listPerPage}`
     );
     
     const data = helper.emptyOrRows(rows);
@@ -21,7 +21,7 @@ async function getMultiple(page = 1) {
 
 async function getByUsername(username) {
     const rows = await db.query (
-        `SELECT id, username, password, name, image_path FROM users WHERE username='${username}'`
+        `SELECT id, username, password, name, image_path, email FROM users WHERE username='${username}'`
     );
 
     const data = helper.emptyOrRows(rows);
@@ -40,7 +40,7 @@ async function insertOne(user) {
 
 async function getUserData(username) {
     const rows = await db.query (
-        `SELECT id, username, name, image_path FROM users WHERE username='${username}'`
+        `SELECT id, username, name, image_path, email FROM users WHERE username='${username}'`
     );
 
     const data = helper.emptyOrRows(rows);
@@ -78,6 +78,27 @@ async function createQueryToResetPassword(id) {
     return randHex;
 }
 
+async function validateResetPasswordCode(resetCode) {
+    const rows = await db.query (
+        `SELECT id, username, name, email, password_change_url, password_change_url_datetime FROM users WHERE password_change_url = ?`, [resetCode]
+    );
+
+    const data = helper.emptyOrRows(rows);
+
+    if(data.length != 0) {
+        const userData = data[0];
+        
+        
+
+        return true;
+    }
+
+    else {
+        return false;
+    }
+
+}
+
 module.exports = {
     getMultiple,
     getByUsername,
@@ -85,5 +106,6 @@ module.exports = {
     getUserData,
     updateImage,
     updateUser,
-    createQueryToResetPassword
+    createQueryToResetPassword,
+    validateResetPasswordCode
 }

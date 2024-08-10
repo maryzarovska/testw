@@ -16,6 +16,7 @@ import Profile from './Profile';
 import Logout from './Logout';
 import User from './User';
 import Settings from './Settings';
+import ResetPasswordPage from './ResetPasswordPage';
 
 import store from './application-store/store';
 import Create from './Create';
@@ -88,6 +89,11 @@ const router = createBrowserRouter([{
     {
       path: "settings",
       element: <Settings />
+    },
+
+    {
+      path: "reset-password/:resetCode",
+      element: <ResetPasswordPage />
     }
   ]
 }])

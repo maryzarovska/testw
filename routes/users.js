@@ -107,14 +107,30 @@ router.put('/update-profile-info', passport.authenticate('jwt', { session: false
 
 router.get('/send-reset-password', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   let user = await users.getByUsername(req.user.username);
-  if(user) {
+  if (user) {
     let result = await users.createQueryToResetPassword(user.id);
-
+    console.log(user);
     const mailOptions = {
       from: 'The Idea project',
       to: `${user.email}`,
       subject: 'Password Reset',
-      text: `Click below to reset your password<br><a href="http://localhost:3000/reset-password/${result}"></a>`
+      html: `
+      <!DOCTYPE html>
+      <html>
+
+        <head>
+          <title>Reset password</title>
+        </head>
+
+        <body>
+          <p>Click below to reset your password</p>
+          <br>
+          <p>
+            <a href="http://localhost:3000/reset-password/${result}">CLICK HERE</a>
+          </p>
+        </body>
+
+      </html>`
     };
 
     transporter.sendMail(mailOptions, (err, info) => {
@@ -130,4 +146,9 @@ router.get('/send-reset-password', passport.authenticate('jwt', { session: false
   }
 });
 
+router.get('/reset-code-check/:resetCode', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
+  console.log(req.params.resetCode);
+  await users.validateResetPasswordCode(req.params.resetCode);
+  res.sendStatus(200);
+});
 module.exports = router;
