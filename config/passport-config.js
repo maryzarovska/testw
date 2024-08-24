@@ -10,7 +10,7 @@ const initialize = (passport, getUserByUsername, save) => {
         const user = await getUserByUsername(username);
 
         if (user !== null) {
-            return done(null, user, { message: "You are already registered" });
+            return done(null, user, { success: false, message: "You are already registered" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -23,6 +23,7 @@ const initialize = (passport, getUserByUsername, save) => {
         save(newUser);
 
         return done(null, newUser, {
+            success: true,
             message: "Registration Successful"
         });
     }

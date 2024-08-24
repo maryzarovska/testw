@@ -25,15 +25,22 @@ const users = require('../services/users');
 const config = require('../config');
 require('../config/passport-config')(passport, users.getByUsername, users.insertOne);
 
-router.post('/signup', (req, res, next) => {
-  passport.authenticate('local-signup', (err, user, info) => {
-    if (err) {
-      res.status(500).json({ message: 'Server error!' });
-    } else {
-      console.log(req.body, req.user)
-      res.status(200).json(info);
-    }
-  })(req, res, next);
+router.post('/signup', async (req, res, next) => {
+  if (await users.checkEmailAvailability(req.body.email)) {
+    passport.authenticate('local-signup', async (err, user, info) => {
+      if (err) {
+        res.status(500).json({ message: 'Server error!' });
+      } else {
+        console.log(req.body, req.user)
+        if (info.success) {
+          await users.setEmailByUsername(req.body.username, req.body.email);
+        }
+        res.status(200).json(info);
+      }
+    })(req, res, next);
+  } else {
+    res.status(200).json({ success: false, message: 'This email is already in use!' });
+  }
 })
 
 router.post('/signin', async (req, res, next) => {

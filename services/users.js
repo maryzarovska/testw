@@ -113,6 +113,20 @@ async function setPassword(id, newPassword) {
     );
 }
 
+async function checkEmailAvailability(email) {
+    const rows = await db.query(
+        `SELECT id FROM users WHERE email = ?`, [email]
+    );
+    const data = helper.emptyOrRows(rows);
+    return data.length === 0;
+}
+
+async function setEmailByUsername(username, email) {
+    const rows = await db.query(
+        `UPDATE users SET email = ? WHERE username = ?`, [email, username]
+    );
+}
+
 module.exports = {
     getMultiple,
     getByUsername,
@@ -122,5 +136,7 @@ module.exports = {
     updateUser,
     createQueryToResetPassword,
     validateResetPasswordCode,
-    setPassword
+    setPassword,
+    checkEmailAvailability,
+    setEmailByUsername
 }
