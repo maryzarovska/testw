@@ -9,7 +9,7 @@ async function getMultiple(page = 1) {
     const rows = await db.query(
         `SELECT id, username, password, name, image_path, email FROM users LIMIT ${offset}, ${config.listPerPage}`
     );
-    
+
     const data = helper.emptyOrRows(rows);
     const meta = { page };
 
@@ -20,7 +20,7 @@ async function getMultiple(page = 1) {
 }
 
 async function getByUsername(username) {
-    const rows = await db.query (
+    const rows = await db.query(
         `SELECT id, username, password, name, image_path, email FROM users WHERE username='${username}'`
     );
 
@@ -39,7 +39,7 @@ async function insertOne(user) {
 }
 
 async function getUserData(username) {
-    const rows = await db.query (
+    const rows = await db.query(
         `SELECT id, username, name, image_path, email FROM users WHERE username='${username}'`
     );
 
@@ -49,7 +49,7 @@ async function getUserData(username) {
 }
 
 async function updateImage(id, imagePath) {
-    const rows = await db.query (
+    const rows = await db.query(
         `UPDATE users SET image_path = ? WHERE id = ?`, [imagePath, id]
     );
 
@@ -58,9 +58,9 @@ async function updateImage(id, imagePath) {
     return data.length > 0 ? data[0] : null;
 }
 
-async function updateUser(id, username, name) {
-    const rows = await db.query (
-        `UPDATE users SET username = ?, name = ? WHERE id = ?`, [username, name, id]
+async function updateUser(id, username, name, email) {
+    const rows = await db.query(
+        `UPDATE users SET username = ?, name = ?, email = ? WHERE id = ?`, [username, name, email, id]
     );
 
     const data = helper.emptyOrRows(rows);
@@ -71,7 +71,7 @@ async function updateUser(id, username, name) {
 async function createQueryToResetPassword(id) {
     let randHex = genRandHex(32);
 
-    await db.query (
+    await db.query(
         `UPDATE users SET password_change_url = ?, password_change_url_datetime = ? WHERE id = ?`, [randHex, new Date().toISOString().slice(0, 19).replace('T', ' '), id]
     );
 
@@ -79,25 +79,38 @@ async function createQueryToResetPassword(id) {
 }
 
 async function validateResetPasswordCode(resetCode) {
-    const rows = await db.query (
+    const rows = await db.query(
         `SELECT id, username, name, email, password_change_url, password_change_url_datetime FROM users WHERE password_change_url = ?`, [resetCode]
     );
 
     const data = helper.emptyOrRows(rows);
 
-    if(data.length != 0) {
+    if (data.length != 0) {
         const userData = data[0];
-        
+
         let codeDateTime = new Date(new Date(userData.password_change_url_datetime).getTime() - new Date().getTimezoneOffset() * 60 * 1000);
         let currentDateTime = new Date();
 
-        return true;
+        if ((currentDateTime - codeDateTime) < 20*60*1000) {
+            return {valid: true, user: userData};
+        }
+        else{
+            await db.query(`UPDATE users SET password_change_url = null, password_change_url_datetime = null`)
+            return {valid: false};
+        }
+            
+
     }
 
     else {
-        return false;
+        return {valid: false};
     }
+}
 
+async function setPassword(id, newPassword) {
+    const rows = await db.query(
+        `UPDATE users SET password = ?, password_change_url = null, password_change_url_datetime = null WHERE id = ?`, [newPassword, id]
+    );
 }
 
 module.exports = {
@@ -108,5 +121,6 @@ module.exports = {
     updateImage,
     updateUser,
     createQueryToResetPassword,
-    validateResetPasswordCode
+    validateResetPasswordCode,
+    setPassword
 }

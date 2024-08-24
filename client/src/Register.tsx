@@ -3,13 +3,14 @@ import axios from 'axios';
 
 function Register() {
 
+    const [email, setEmail] = React.useState("");
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
 
-    function register(event:React.FormEvent<HTMLFormElement>) {
+    function register(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         axios.post("/api/users/signup", {
-            username, password
+            email, username, password
         }).then(response => console.log(response.data))
     }
 
@@ -18,8 +19,9 @@ function Register() {
             <h1>Registration</h1>
 
             <form onSubmit={register}>
-                <input type="text" value={username} onChange={event => setUsername(event.target.value)} /> <br />
-                <input type="password" value={password} onChange={event => setPassword(event.target.value)} /> <br /><br />
+                <input type="text" value={email} placeholder='Email' onChange={event => setEmail(event.target.value)} /> <br />
+                <input type="text" value={username} placeholder='Username' onChange={event => setUsername(event.target.value)} /> <br />
+                <input type="password" value={password} placeholder='Password' onChange={event => setPassword(event.target.value)} /> <br /><br />
                 <button type="submit">Register</button>
             </form>
         </>

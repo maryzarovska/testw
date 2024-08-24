@@ -1,14 +1,15 @@
 var express = require('express');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const bcrypt = require('bcrypt');
 
 const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   host: 'sandbox.smtp.mailtrap.io',
   port: 2525,
   auth: {
-    user: '9291827ec6778c',
-    pass: '4607d0c5b444f9'
+    user: 'f0d42ede19316b',
+    pass: '91e1ed16e10137'
   }
 });
 
@@ -29,6 +30,7 @@ router.post('/signup', (req, res, next) => {
     if (err) {
       res.status(500).json({ message: 'Server error!' });
     } else {
+      console.log(req.body, req.user)
       res.status(200).json(info);
     }
   })(req, res, next);
@@ -91,7 +93,7 @@ router.post('/upload-profile-image', passport.authenticate('jwt', { session: fal
 router.put('/update-profile-info', passport.authenticate('jwt', { session: false }), async (req, res) => {
   let user = await users.getByUsername(req.user.username);
   if (user) {
-    users.updateUser(user.id, req.body.username, req.body.name).then(data => {
+    users.updateUser(user.id, req.body.username, req.body.name, req.body.email).then(data => {
       console.log(data);
       const userData = { id: user.id, username: req.body.username };
       const token = jwt.sign({ user: userData }, config.jwtSecret);
@@ -148,7 +150,14 @@ router.get('/send-reset-password', passport.authenticate('jwt', { session: false
 
 router.get('/reset-code-check/:resetCode', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   console.log(req.params.resetCode);
-  await users.validateResetPasswordCode(req.params.resetCode);
+  let validationResult = await users.validateResetPasswordCode(req.params.resetCode);
+  res.send(validationResult);
+});
+
+router.post('/set-new-password', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  await users.setPassword(req.body.userId, hashedPassword);
   res.sendStatus(200);
 });
+
 module.exports = router;

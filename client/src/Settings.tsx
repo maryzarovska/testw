@@ -9,6 +9,7 @@ function Settings() {
     const [user, setUser] = React.useState<{ id: number, username: string, name: string, image_path: string | null | undefined }>();
     const [username, setUsername] = React.useState<string>();
     const [name, setName] = React.useState<string>();
+    const [email, setEmail] = React.useState<string>();
     const [file, setFile] = React.useState<File | null>(null);
     const [errorMessage, setErrorMessage] = React.useState<string>('');
 
@@ -19,7 +20,7 @@ function Settings() {
     };
 
     function saveChanges() {
-        axios.put(`api/users/update-profile-info`, {username, name}, {
+        axios.put(`api/users/update-profile-info`, {username, name, email}, {
             headers: {
                 'Authorization': localStorage.getItem('token')
             }
@@ -86,6 +87,7 @@ function Settings() {
             setUser(response.data.user);
             setUsername(response.data.user.username);
             setName(response.data.user.name);
+            setEmail(response.data.user.email);
         });
     }, []);
 
@@ -97,6 +99,7 @@ function Settings() {
             <div className='info-settings'>
                 <div className='posUser'><h3>Username: </h3> <input type="text" onChange={event => setUsername(event.target.value)} value={username} /></div> <br />
                 <div className='posUser'><h3>Name: </h3> <input type="text" onChange={event => setName(event.target.value)} value={name} /> </div> <br />
+                <div className='posUser'><h3>Email: </h3> <input type="text" onChange={event => setEmail(event.target.value)} value={email} /> </div> <br />
                 <button style={{ width: 'auto' }} onClick={saveChanges}>Save changes</button>
                 <button style={{ width: 'auto' }} onClick={changePassword}>Change password</button>
 
