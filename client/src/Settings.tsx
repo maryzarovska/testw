@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 
+
 function Settings() {
 
     const [user, setUser] = React.useState<{ id: number, username: string, name: string, image_path: string | null | undefined }>();
