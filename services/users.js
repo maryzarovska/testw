@@ -127,6 +127,17 @@ async function setEmailByUsername(username, email) {
     );
 }
 
+async function getUserSubscriptions(id) {
+    const rows = await db.query(
+        `SELECT users.id, users.username, users.name, users.image_path from subscriber_publisher 
+        INNER JOIN users ON subscriber_publisher.publisher_id = users.id WHERE subscriber_id = ?`, [id]
+    );
+
+    const data = helper.emptyOrRows(rows);
+
+    return data
+}
+
 module.exports = {
     getMultiple,
     getByUsername,
@@ -138,5 +149,6 @@ module.exports = {
     validateResetPasswordCode,
     setPassword,
     checkEmailAvailability,
-    setEmailByUsername
+    setEmailByUsername,
+    getUserSubscriptions
 }

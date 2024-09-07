@@ -7,14 +7,20 @@ import { HashLoader } from 'react-spinners';
 function User() {
 
     const params = useParams();
-    const [userData, setUserData] = React.useState<{username: string, id: number}>();
+    const [userData, setUserData] = React.useState<{ username: string, id: number }>();
     const [posts, setPosts] = React.useState<Post[]>([]);
-    const [tableName, setTableName] = React.useState<"published works" | "comments">("published works");
+    const [tableName, setTableName] = React.useState<"published works">("published works");
     const [loading, setLoading] = React.useState<boolean>(true)
+    const [isSubscribed, setIsSubscribed] = React.useState<boolean>(true);
+
+    function subscribe() {
+
+    }
 
     React.useEffect(() => {
         axios.get(`/api/users/profile/${params.username}`).then(response => {
             setUserData(response.data)
+            axios.get(``)
         })
 
         axios.get<{ data: Post[], meta: any }>(`/api/get-posts-by-username-foreign-user/${params.username}`).then(response => {
@@ -26,12 +32,15 @@ function User() {
     return (
         <>
             <h1>Profile</h1>
-            <div className='info'><div className='posUser'><h3>Username: </h3> {userData?.username}</div></div>
+            <div className='info'>
+                <div className='posUser'>
+                    <h3>Username: </h3>
+                    {userData?.username} <br /><br />
+                    <button onClick={subscribe}>{isSubscribed?"Unsubscribe":"Subscribe"}</button>
+                </div>
+            </div>
             <div id='navP'>
                 <span className={tableName === "published works" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("published works")}>Published Works</span>
-                <span className={tableName === "comments" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("comments")}>Comments</span>
-
-
             </div>
 
             {tableName === "published works" ? <>
@@ -50,13 +59,10 @@ function User() {
                         </div>)}
                     </div>
                 }
-                </>:
-
-                tableName === "comments" ?
-                <>Comments</> : <>Error</>
+            </> : <>Error</>
             }
-            </>
+        </>
     );
 }
 
-            export default User;
+export default User;

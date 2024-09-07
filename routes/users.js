@@ -167,4 +167,8 @@ router.post('/set-new-password', passport.authenticate('jwt', { session: false }
   res.sendStatus(200);
 });
 
+router.get('/get-subscriptions/:id',passport.authenticate('jwt', { session: false }), async (req, res) => {
+  res.send(await users.getUserSubscriptions(req.params.id ));
+});
+
 module.exports = router;

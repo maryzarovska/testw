@@ -6,6 +6,13 @@ import { Link } from 'react-router-dom';
 import { response } from 'express';
 import { Post } from './PostType';
 
+type Subscription = {
+    id: number;
+    username: string;
+    name: string | null | undefined;
+    image_path: string | null | undefined;
+}
+
 function Profile() {
 
     const [user, setUser] = React.useState<{ id: number, username: string, name: string, image_path: string | null | undefined }>()
@@ -13,8 +20,9 @@ function Profile() {
     const [posts, setPosts] = React.useState<Post[]>()
     const modal = React.useRef<HTMLDivElement>(null)
     const [idToDelete, setIdToDelete] = React.useState<number | null>()
-    const [tableName, setTableName] = React.useState<"published works" | "drafts" | "comments">("published works");
+    const [tableName, setTableName] = React.useState<"published works" | "drafts" | "subscriptions">("published works");
     const [file, setFile] = React.useState<File | null>(null);
+    const [subscriptions, setSubscriptions] = React.useState<Subscription[]>([])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -37,6 +45,11 @@ function Profile() {
             let responsePosts = await axios.get<{ data: Post[], meta: any }>(`/api/get-posts-by-username/${response.data.user.username}`)
             setLoading(false)
             setPosts(responsePosts.data.data);
+
+            let responseSubscriptions = await axios.get<Subscription[]>(`/api/users/get-subscriptions/${response.data.user.id}`, {
+                headers: { "Authorization": localStorage.getItem("token") }
+            })
+            setSubscriptions(responseSubscriptions.data);
         });
     }, []);
 
@@ -129,9 +142,7 @@ function Profile() {
             <div id='navP'>
                 <span className={tableName === "published works" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("published works")}>Published Works</span>
                 <span className={tableName === "drafts" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("drafts")}>Drafts</span>
-                <span className={tableName === "comments" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("comments")}>Comments</span>
-
-
+                <span className={tableName === "subscriptions" ? 'navItP activated' : 'navItP'} onClick={() => setTableName("subscriptions")}>Subscriptions</span>
             </div>
 
             {tableName === "published works" ? <>
@@ -178,8 +189,14 @@ function Profile() {
                         </div>
                     </> :
 
-                    tableName === "comments" ?
-                        <>Comments</> : <>Error</>
+                    tableName === "subscriptions" ?
+                        <>
+                            <div className='postwrap'>
+                                {subscriptions.map(subscription => <div className='postItem' key={subscription.id}>
+                                    <h4><Link to={`/user/${subscription.username}`}>{subscription.username}</Link></h4>
+                                </div>)}
+                            </div>
+                        </> : <>Error</>
             }
 
         </>
