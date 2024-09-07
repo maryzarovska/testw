@@ -20,7 +20,13 @@ function User() {
     React.useEffect(() => {
         axios.get(`/api/users/profile/${params.username}`).then(response => {
             setUserData(response.data)
-            axios.get(``)
+            axios.get<boolean>(`/api/users/check-subscription/${response.data.id}`, {
+                headers: {
+                    'Authorization': localStorage.getItem('token')
+                }
+            }).then(response => {
+                setIsSubscribed(response.data);
+            });
         })
 
         axios.get<{ data: Post[], meta: any }>(`/api/get-posts-by-username-foreign-user/${params.username}`).then(response => {

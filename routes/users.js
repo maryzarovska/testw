@@ -171,4 +171,8 @@ router.get('/get-subscriptions/:id',passport.authenticate('jwt', { session: fals
   res.send(await users.getUserSubscriptions(req.params.id ));
 });
 
+router.get('/check-subscription/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  res.send(await users.isUserSubscribed(req.user.id, req.params.id));
+});
+
 module.exports = router;

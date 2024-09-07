@@ -138,6 +138,16 @@ async function getUserSubscriptions(id) {
     return data
 }
 
+async function isUserSubscribed(subId, pubId) {
+    const rows = await db.query(
+        `SELECT * FROM subscriber_publisher WHERE subscriber_id = ? AND publisher_id = ?`, [subId, pubId]
+    );
+
+    const data = helper.emptyOrRows(rows);
+
+    return data.length > 0;
+}
+
 module.exports = {
     getMultiple,
     getByUsername,
@@ -150,5 +160,6 @@ module.exports = {
     setPassword,
     checkEmailAvailability,
     setEmailByUsername,
-    getUserSubscriptions
+    getUserSubscriptions,
+    isUserSubscribed
 }
