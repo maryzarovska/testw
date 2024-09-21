@@ -148,6 +148,26 @@ async function isUserSubscribed(subId, pubId) {
     return data.length > 0;
 }
 
+async function toSubscribe(subId, pubId) {
+    const rows = await db.query(
+        `INSERT INTO subscriber_publisher (subscriber_id, publisher_id) VALUES (?, ?)`, [subId, pubId]
+    );
+
+    // const data = helper.emptyOrRows(rows);
+
+    // return data.length > 0; 
+}
+
+async function toUnsubscribe(subId, pubId) {
+    const rows = await db.query(
+        `DELETE FROM subscriber_publisher WHERE subscriber_id = ? AND publisher_id = ?`, [subId, pubId]
+    );
+
+    // const data = helper.emptyOrRows(rows);
+
+    // return data.length > 0; 
+}
+
 module.exports = {
     getMultiple,
     getByUsername,
@@ -161,5 +181,7 @@ module.exports = {
     checkEmailAvailability,
     setEmailByUsername,
     getUserSubscriptions,
-    isUserSubscribed
+    isUserSubscribed,
+    toSubscribe,
+    toUnsubscribe
 }

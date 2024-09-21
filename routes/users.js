@@ -175,4 +175,24 @@ router.get('/check-subscription/:id', passport.authenticate('jwt', { session: fa
   res.send(await users.isUserSubscribed(req.user.id, req.params.id));
 });
 
+router.post('/new-subscription', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  if(req.body.subscriberId === req.user.id) {
+    await users.toSubscribe(req.body.subscriberId, req.body.publisherId);
+    res.send({success: true});
+  }
+  else {
+    res.send({success: false, message: "Error subscribing"});
+  }
+});
+
+router.post('/unsubscribe', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  if(req.body.subscriberId === req.user.id) {
+    await users.toUnsubscribe(req.body.subscriberId, req.body.publisherId);
+    res.send({success: true});
+  }
+  else {
+    res.send({success: false, message: "Error unsubscribing"});
+  }
+});
+
 module.exports = router;
