@@ -11,6 +11,7 @@ function Search() {
   const [categoriesSearchText, setCategoriesSearchText] = React.useState<string>("");
   const [textSearchText, setTextSearchText] = React.useState<string>("");
   const [posts, setPosts] = React.useState<any[]>([]);
+  const [users, setUsers] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     axios.get<{ id: number, cat_name: string }[]>("/api/categories/all").then(response => {
@@ -21,6 +22,22 @@ function Search() {
   function searchItems() {
     axios.post("/api/posts/list", { textSearchText, categories: selectedCategories }).then(response => {
       setPosts(response.data);
+    })
+    axios.post("/api/users/list", {textSearchText}).then(response => {
+      response.data.sort((a: any, b: any) => {
+        let s1 = a.username.toLowerCase().startsWith(textSearchText.toLowerCase());
+        let s2 = b.username.toLowerCase().startsWith(textSearchText.toLowerCase());
+        if (s1 !== s2) {
+            return (s2 ? 1 : 0) - (s1 ? 1 : 0);
+        } else if (a.username < b.username) {
+            return -1;
+        } else if (a.username > b.username) {
+            return 1;
+        } else {
+            return 0;
+        }
+    });
+      setUsers(response.data);
     })
   }
 
@@ -72,6 +89,13 @@ function Search() {
         <p>Relationship: {post.relationship}</p>
         <p>Categories: {post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
         <p>Summary: {post.summary}</p>
+      </div>)}
+    </div>
+
+    <div className='postsWrap'>
+      {users?.map(user => <div className='postItem' key={user.id}>
+        <h4><Link to={`/user/${user.username}`}>{user.username}</Link></h4>
+        <p>Name: {user.name}</p>
       </div>)}
     </div>
 

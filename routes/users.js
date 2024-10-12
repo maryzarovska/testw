@@ -195,4 +195,9 @@ router.post('/unsubscribe', passport.authenticate('jwt', { session: false }), as
   }
 });
 
+router.post('/list', async (req, res, next) => {
+  console.log(req.body)
+  res.json(await users.searchByUsername(req.body.textSearchText))
+})
+
 module.exports = router;

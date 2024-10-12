@@ -168,6 +168,17 @@ async function toUnsubscribe(subId, pubId) {
     // return data.length > 0; 
 }
 
+async function searchByUsername(searchText) {
+    const rows = await db.query(
+        `select username, name from users
+        where (LOWER(username) LIKE LOWER('%${searchText}%'));`
+    );
+
+    const data = helper.emptyOrRows(rows);
+
+    return data;
+}
+
 module.exports = {
     getMultiple,
     getByUsername,
@@ -183,5 +194,6 @@ module.exports = {
     getUserSubscriptions,
     isUserSubscribed,
     toSubscribe,
-    toUnsubscribe
+    toUnsubscribe,
+    searchByUsername
 }
