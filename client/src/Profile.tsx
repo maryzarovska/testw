@@ -14,6 +14,7 @@ type Subscription = {
     image_path: string | null | undefined;
 }
 
+
 function Profile() {
 
     const [user, setUser] = React.useState<{ id: number, username: string, name: string, image_path: string | null | undefined }>()
