@@ -14,15 +14,15 @@ type Subscription = {
     image_path: string | null | undefined;
 }
 
+type ProfileTab = "published_works" | "drafts" | "subscriptions";
 
 function Profile() {
-
     const [user, setUser] = React.useState<{ id: number, username: string, name: string, image_path: string | null | undefined }>()
     const [loading, setLoading] = React.useState<boolean>(true)
     const [posts, setPosts] = React.useState<Post[]>()
     const modal = React.useRef<HTMLDivElement>(null)
     const [idToDelete, setIdToDelete] = React.useState<number | null>()
-    const [tableName, setTableName] = React.useState<"published_works" | "drafts" | "subscriptions">("published_works");
+    const [tableName, setTableName] = React.useState<ProfileTab>("published_works");
     const [file, setFile] = React.useState<File | null>(null);
     const [subscriptions, setSubscriptions] = React.useState<Subscription[]>([])
     let [searchParams, setSearchParams] = useSearchParams();
@@ -35,8 +35,13 @@ function Profile() {
 
     React.useEffect(() => {
         let pageName: any = searchParams.get('p');
-        if (pageName && pageName in ["published_works", "drafts", "subscriptions"]) {
+        if (pageName && ["published_works", "drafts", "subscriptions"].includes(pageName)) {
             setTableName(pageName);
+        } else {
+            setSearchParams(prevParams => {
+                prevParams.set('p', 'published_works');
+                return prevParams;
+            })
         }
         axios.get("/api/users/profile", {
             headers: { "Authorization": localStorage.getItem("token") }
@@ -147,9 +152,39 @@ function Profile() {
 
 
             <div id='navP'>
-                <span className={tableName === "published_works" ? 'navItP activated' : 'navItP'} onClick={() => { setTableName("published_works"); setSearchParams('p', 'published_works' as any) }}>Published Works</span>
-                <span className={tableName === "drafts" ? 'navItP activated' : 'navItP'} onClick={() => { setTableName("drafts"); setSearchParams('p', 'drafts' as any) }}>Drafts</span>
-                <span className={tableName === "subscriptions" ? 'navItP activated' : 'navItP'} onClick={() => { setTableName("subscriptions"); setSearchParams('p', 'subscriptions' as any) }}>Subscriptions</span>
+                <span
+                    className={tableName === "published_works" ? 'navItP activated' : 'navItP'}
+                    onClick={() => {
+                        setTableName("published_works");
+                        setSearchParams(
+                            prevParams => {
+                                prevParams.set('p', 'published_works');
+                                return prevParams;
+                            }
+                        )
+                        }}>Published Works</span>
+                <span
+                    className={tableName === "drafts" ? 'navItP activated' : 'navItP'}
+                    onClick={() => {
+                        setTableName("drafts");
+                        setSearchParams(
+                            prevParams => {
+                                prevParams.set('p', 'drafts');
+                                return prevParams;
+                            }
+                        )
+                        }}>Drafts</span>
+                <span
+                    className={tableName === "subscriptions" ? 'navItP activated' : 'navItP'}
+                    onClick={() => {
+                        setTableName("subscriptions");
+                        setSearchParams(
+                            prevParams => {
+                                prevParams.set('p', 'subscriptions');
+                                return prevParams;
+                            }
+                        )
+                        }}>Subscriptions</span>
             </div>
 
             {tableName === "published_works" ? <>
