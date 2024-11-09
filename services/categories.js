@@ -1,6 +1,5 @@
 const db = require('./db');
-const helper = require('../helper');
-const config = require('../config');
+const helper = require('./helper');
 
 async function getAll() {
     const rows = await db.query(

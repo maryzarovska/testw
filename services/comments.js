@@ -1,6 +1,6 @@
 const db = require('./db');
-const helper = require('../helper');
-const config = require('../config');
+const helper = require('./helper');
+const config = require('../config/db');
 
 async function getByPostId(postId, page = 1) {
     const offset = helper.getOffset(page, config.listPerPage);

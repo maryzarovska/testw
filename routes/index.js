@@ -6,7 +6,7 @@ const comments = require('../services/comments')
 const passport = require('passport');
 
 const users = require('../services/users');
-const config = require('../config');
+
 require('../config/passport-config')(passport, users.getByUsername, users.insertOne);
 
 router.get("/get-posts-by-username/:username", async function (req, res, next) {

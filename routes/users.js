@@ -22,7 +22,7 @@ const multer = require('multer');
 const upload = multer({ storage });
 
 const users = require('../services/users');
-const config = require('../config');
+const config = require('../config/db');
 require('../config/passport-config')(passport, users.getByUsername, users.insertOne);
 
 router.post('/signup', async (req, res, next) => {

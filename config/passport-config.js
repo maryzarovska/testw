@@ -3,7 +3,7 @@ const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
 const bcrypt = require('bcrypt');
 
-const config = require('../config');
+const config = require('./db');
 
 const initialize = (passport, getUserByUsername, save) => {
     const register = async (username, password, done) => {

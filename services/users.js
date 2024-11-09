@@ -1,6 +1,6 @@
 const db = require('./db');
-const helper = require('../helper');
-const config = require('../config');
+const helper = require('./helper');
+const config = require('../config/db');
 
 const genRandHex = size => [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 

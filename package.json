@@ -5,8 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "build": "cd client && npm install && npm run build",
-    "dev": "nodemon ./bin/www",
-    "csi": "npm install && cd client && npm install"
+    "dev": "nodemon ./bin/www"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-react": "^7.0.0",

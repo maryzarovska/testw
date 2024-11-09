@@ -2,7 +2,8 @@ const config = {
     db: {
         host: "localhost",
         user: "root",
-        password: "admin",
+        password: "Mdls22113123",
+        // password: "admin",
         database: "funtest",
     },
     listPerPage: 10,
