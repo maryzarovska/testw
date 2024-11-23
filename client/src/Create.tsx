@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import './css/Create.css';
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// import { CKEditor } from '@ckeditor/ckeditor5-react';
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useNavigate, useParams } from "react-router-dom";
 
 function Create() {
@@ -147,12 +147,10 @@ function Create() {
             <input type="text" placeholder="Title" className="title" value={title} onChange={event => setTitle(event.target.value)} /> <br /> <br />
             <textarea name="" id="" cols={80} rows={7} placeholder="Summary" className="summary" value={summary} onChange={event => setSummary(event.target.value)}></textarea> <br /><br />
             <div className="ckeditor-wrap">
-                <CKEditor
+                {/* <CKEditor
                     editor={ClassicEditor}
                     config={{
-                        // plugins: [
-                        //     Alignment
-                        // ],
+                        plugins: [],
                         toolbar: [
                             'undo', 'redo',
                             '|', 'heading',
@@ -178,9 +176,9 @@ function Create() {
                     onChange={(event, editor) => {
                         setText(editor.getData());
                     }}
-                ></CKEditor>
+                /> */}
+                <textarea cols={80} rows={20} placeholder="Content" className="text" value={text} onChange={event => setText(event.target.value)}></textarea>
             </div>
-            {/* <textarea name="" id="" cols={80} rows={20} placeholder="Content" className="text" value={text} onChange={event => setText(event.target.value)}></textarea> */}
         </form>
 
         <input type="checkbox" onChange={event => { setDraft(event.target.checked) }} checked={draft} /> Save as draft <br /> <br />

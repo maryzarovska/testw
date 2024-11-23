@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+// import { CKEditor } from '@ckeditor/ckeditor5-react';
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import parse from 'html-react-parser';
 
 function Post() {
@@ -41,11 +41,10 @@ function Post() {
                 <HashLoader color="#6495ed" className='spinner' />
             </div> :
             <>{post ?
-                <>{post.title} <br /><br />{post.text}
-
+                <>{post.title} <br /><br />{parse(post.text)}
                     <div style={{ width: "60%", padding: "20px", marginRight: "20%", marginLeft: "20%" }}>
                         <div>
-                            <CKEditor
+                            {/* <CKEditor
                                 editor={ClassicEditor}
                                 data={text}
                                 config={{
@@ -57,7 +56,8 @@ function Post() {
                                 onChange={(event, editor) => {
                                     setText(editor.getData());
                                 }}
-                            />
+                            /> */}
+                            <textarea cols={80} rows={3} value={text} onChange={event => setText(event.target.value)}></textarea>
                         </div>
                         <button type="submit" onClick={publish}>Send</button>
                     </div>
@@ -68,12 +68,8 @@ function Post() {
                                 <h3>{comment.username} {new Date(comment.publication_date).toLocaleString()}</h3>
                                 <p>{parse(comment.text)}</p>
                             </div>
-
                         )
                     }
-
-
-
                 </> : <>404 Not Found</>}</>}
     </>);
 }
