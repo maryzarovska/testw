@@ -227,6 +227,7 @@ function Profile() {
                                 <p>Categories: {post.categories_list ? post.categories_list.split(',').join(', ') : ''}</p>
                                 <p>Summary: {post.summary}</p>
                                 <button onClick={deleteClick} id='deleteBtn' data-id={post.id}>Delete post</button>
+                                <Link to={`/edit/${post.id}`} className='navIt'>Edit</Link>
                             </div>)}
                         </div>
                     </> :
