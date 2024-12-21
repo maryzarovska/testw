@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
-// import { CKEditor } from '@ckeditor/ckeditor5-react';
-// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import parse from 'html-react-parser';
 
 function Post() {
@@ -44,20 +42,12 @@ function Post() {
                 <>{post.title} <br /><br />{parse(post.text)}
                     <div style={{ width: "60%", padding: "20px", marginRight: "20%", marginLeft: "20%" }}>
                         <div>
-                            {/* <CKEditor
-                                editor={ClassicEditor}
-                                data={text}
-                                config={{
-                                    toolbar: []
-                                }}
-                                onReady={editor => {
-                                    console.log('Editor is ready to use!', editor);
-                                }}
-                                onChange={(event, editor) => {
-                                    setText(editor.getData());
-                                }}
-                            /> */}
-                            <textarea cols={80} rows={3} value={text} onChange={event => setText(event.target.value)}></textarea>
+                            <textarea
+                                cols={80}
+                                rows={3}
+                                value={text}
+                                onChange={event => setText(event.target.value)}
+                            ></textarea>
                         </div>
                         <button type="submit" onClick={publish}>Send</button>
                     </div>
