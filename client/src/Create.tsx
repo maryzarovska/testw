@@ -3,7 +3,37 @@ import './css/Create.css';
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import { ClassicEditor, Essentials, Paragraph, Bold, Italic, FontBackgroundColor } from 'ckeditor5';
+import {
+    Autoformat,
+    BlockQuote,
+    Bold,
+    ClassicEditor,
+    CloudServices,
+    Essentials,
+    Heading,
+    Image,
+    ImageCaption,
+    ImageResize,
+    ImageStyle,
+    ImageToolbar,
+    ImageUpload,
+    Base64UploadAdapter,
+    Indent,
+    IndentBlock,
+    Italic,
+    Link,
+    List,
+    MediaEmbed,
+    Mention,
+    Paragraph,
+    PasteFromOffice,
+    PictureEditing,
+    Table,
+    TableColumnResize,
+    TableToolbar,
+    TextTransformation,
+    Underline,
+} from 'ckeditor5';
 import { useNavigate, useParams } from "react-router-dom";
 
 import 'ckeditor5/ckeditor5.css';
@@ -26,7 +56,7 @@ function Create() {
 
     function create() {
         axios.post("/api/create-post", {
-            title, summary, text: text.replace('', ''), user_id: user.id, rating, relationship, categories: selectedCategories, is_draft: draft
+            title, summary, text, user_id: user.id, rating, relationship, categories: selectedCategories, is_draft: draft
         }, {
             headers: { "Authorization": localStorage.getItem("token") }
         }).then(response => {
@@ -41,7 +71,7 @@ function Create() {
 
     function edit() {
         axios.put(`/api/posts/edit/${params.id}`, {
-            title, summary, text: text.replace('', ''), rating, relationship, categories: selectedCategories, is_draft: draft
+            title, summary, text, rating, relationship, categories: selectedCategories, is_draft: draft
         }, {
             headers: { "Authorization": localStorage.getItem("token") }
         }).then(response => {
@@ -143,7 +173,6 @@ function Create() {
             </select>
         </div>
 
-
         <form>
             <br />
             <input type="text" placeholder="Title" className="title" value={title} onChange={event => setTitle(event.target.value)} /> <br /> <br />
@@ -153,14 +182,57 @@ function Create() {
                     editor={ClassicEditor}
                     config={{
                         licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3MzYwMzUxOTksImp0aSI6IjQ5ZGFiNjQ3LTllNzQtNDE5NS1iNWE5LTI4MDM0M2FiOWQ4OCIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6ImJjNjZiZmIwIn0.g99C25EFAl_wWlkXuqtJFZnPoJwIGpfTROC1CoA18e6texKzu_-unz660W7wCCnk87rD3g9Wj7e3ga9p0MUU_g',
-                        plugins: [Essentials, Paragraph, Bold, Italic, FontBackgroundColor],
+                        plugins: [
+                            Autoformat,
+                            BlockQuote,
+                            Bold,
+                            CloudServices,
+                            Essentials,
+                            Heading,
+                            Image,
+                            ImageCaption,
+                            ImageResize,
+                            ImageStyle,
+                            ImageToolbar,
+                            ImageUpload,
+                            Base64UploadAdapter,
+                            Indent,
+                            IndentBlock,
+                            Italic,
+                            Link,
+                            List,
+                            MediaEmbed,
+                            Mention,
+                            Paragraph,
+                            PasteFromOffice,
+                            PictureEditing,
+                            Table,
+                            TableColumnResize,
+                            TableToolbar,
+                            TextTransformation,
+                            Underline
+                        ],
                         toolbar: {
                             items: [
-                                'undo', 'redo',
+                                'undo',
+                                'redo',
                                 '|',
-                                'bold', 'italic',
+                                'heading',
                                 '|',
-                                'fontBackgroundColor',
+                                'bold',
+                                'italic',
+                                'underline',
+                                '|',
+                                'link',
+                                'uploadImage',
+                                'insertTable',
+                                'blockQuote',
+                                '|',
+                                'bulletedList',
+                                'numberedList',
+                                '|',
+                                'outdent',
+                                'indent'
                             ],
                             shouldNotGroupWhenFull: false
                         },

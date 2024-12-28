@@ -94,7 +94,8 @@ async function getByCategory(category, page = 1) {
 async function insertOne(post) {
     const result = await db.query(
         `INSERT INTO posts (title, summary, text, user_id, rating, relationship, is_draft)
-        VALUES ('${post.title}', '${post.summary}', "${post.text}", '${post.user_id}', '${post.rating}', '${post.relationship}', ${post.is_draft})`
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [post.title, post.summary, post.text, post.user_id, post.rating, post.relationship, post.is_draft]
     );
 
     const post_id = result.insertId;
