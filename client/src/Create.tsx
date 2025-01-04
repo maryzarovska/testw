@@ -17,7 +17,7 @@ import {
     ImageStyle,
     ImageToolbar,
     ImageUpload,
-    Base64UploadAdapter,
+    // Base64UploadAdapter,
     Indent,
     IndentBlock,
     Italic,
@@ -37,6 +37,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 
 import 'ckeditor5/ckeditor5.css';
+import ThisCustomImageUploadAdapterPlugin from "./CustomImageUploadAdapter";
 
 function Create() {
     const params = useParams();
@@ -127,7 +128,6 @@ function Create() {
             setCategories([...categories, cat]);
             setSelectedCategories(selectedCategories.filter(c => c.cat_name !== event.target.dataset.category))
         }
-
     }
 
     return (<>
@@ -181,7 +181,7 @@ function Create() {
                 <CKEditor
                     editor={ClassicEditor}
                     config={{
-                        licenseKey: 'eyJhbGciOiJFUzI1NiJ9.eyJleHAiOjE3MzYwMzUxOTksImp0aSI6IjQ5ZGFiNjQ3LTllNzQtNDE5NS1iNWE5LTI4MDM0M2FiOWQ4OCIsInVzYWdlRW5kcG9pbnQiOiJodHRwczovL3Byb3h5LWV2ZW50LmNrZWRpdG9yLmNvbSIsImRpc3RyaWJ1dGlvbkNoYW5uZWwiOlsiY2xvdWQiLCJkcnVwYWwiLCJzaCJdLCJ3aGl0ZUxhYmVsIjp0cnVlLCJsaWNlbnNlVHlwZSI6InRyaWFsIiwiZmVhdHVyZXMiOlsiKiJdLCJ2YyI6ImJjNjZiZmIwIn0.g99C25EFAl_wWlkXuqtJFZnPoJwIGpfTROC1CoA18e6texKzu_-unz660W7wCCnk87rD3g9Wj7e3ga9p0MUU_g',
+                        licenseKey: 'GPL',
                         plugins: [
                             Autoformat,
                             BlockQuote,
@@ -195,7 +195,7 @@ function Create() {
                             ImageStyle,
                             ImageToolbar,
                             ImageUpload,
-                            Base64UploadAdapter,
+                            // Base64UploadAdapter,
                             Indent,
                             IndentBlock,
                             Italic,
@@ -210,7 +210,8 @@ function Create() {
                             TableColumnResize,
                             TableToolbar,
                             TextTransformation,
-                            Underline
+                            Underline,
+                            ThisCustomImageUploadAdapterPlugin
                         ],
                         toolbar: {
                             items: [
