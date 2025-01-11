@@ -5,6 +5,12 @@ const categories = require('../services/categories');
 const comments = require('../services/comments')
 const passport = require('passport');
 
+const cloudinary = require('cloudinary').v2;
+
+const { storage } = require('../storage/storage');
+const multer = require('multer');
+const upload = multer({ storage });
+
 const users = require('../services/users');
 
 require('../config/passport-config')(passport, users.getByUsername, users.insertOne);
@@ -73,6 +79,11 @@ router.get("/comments/:postId", async (req, res, next) => {
 router.post("/create-comment", passport.authenticate('jwt', { session: false }), async (req, res, next) => {
     const p = await comments.insertOne(req.body);
     res.json(p);
-})
+});
+
+router.post("/upload-post-image", passport.authenticate('jwt', { session: false }), upload.single('image'), async (req, res, next) => {
+    console.log(req.file);
+    res.send({ url: req.file.path });
+});
 
 module.exports = router;
