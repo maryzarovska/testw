@@ -1,46 +1,59 @@
-import axios from 'axios';
 import { UploadAdapter } from 'ckeditor5';
 
-class CustomImageUploadAdapter implements UploadAdapter {
-    loader: any
+const toBase64 = (file: any) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+});
 
-    constructor(loader: any) {
+const dataURLtoFile = (dataurl: string, filename: string) => {
+    let arr = dataurl.split(',')
+    let matchArr = arr[0].match(/:(.*?);/);
+    if (!matchArr) return;
+    let mime = matchArr[1];
+    let bstr = atob(arr[arr.length - 1]);
+    let n = bstr.length;
+    let u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+}
+
+class CustomImageUploadAdapter implements UploadAdapter {
+    constructor(private loader: any) {
         this.loader = loader;
     }
 
     upload() {
-        const formData = new FormData();
-        return this.loader.file.then(
-            (file: any) =>
-                new Promise((resolve, reject) => {
-                    formData.append("image", file, file.name);
-                    console.log();
-                    return axios.post("/api/upload-post-image", formData, {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                            "Authorization": localStorage.getItem("token")
-                        }
-                    }).then((data: any) => {
-                        console.log(data.data.url)
-                        if (data.data.url) {
-                            this.loader.uploaded = true;
-                            resolve({
-                                default: data.data.url,
-                            });
-                        } else {
-                            reject(`Error uploading file: ${file.name}.`);
-                        }
-                    });
-                })
-        );
+        return this.loader.file.then((file: File) => {
+            return new Promise(async (resolve, reject) => {
+                resolve({ default: await toBase64(file) });
+                // TODO: Upload to server
+                // const formData = new FormData();
+                // formData.append("image", file, file.name);
+                // return axios.post("/api/upload-post-image", formData, {
+                //     headers: {
+                //         "Content-Type": "multipart/form-data",
+                //         "Authorization": localStorage.getItem("token")
+                //     }
+                // }).then((data: any) => {
+                //     console.log(data.data.url)
+                //     if (data.data.url) {
+                //         resolve({ default: data.data.url });
+                //     } else {
+                //         reject(`Error uploading file: ${file.name}.`);
+                //     }
+                // });
+            });
+        });
     }
 
-    abort() {
-        console.log('***');
-    }
+    abort(): void { }
 }
 
-export default function ThisCustomImageUploadAdapterPlugin(editor: any) {
+export function CustomImageUploadAdapterPlugin(editor: any) {
     editor.plugins.get("FileRepository").createUploadAdapter = (loader: any) => {
         return new CustomImageUploadAdapter(loader);
     };

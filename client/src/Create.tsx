@@ -35,9 +35,9 @@ import {
     Underline,
 } from 'ckeditor5';
 import { useNavigate, useParams } from "react-router-dom";
+import { CustomImageUploadAdapterPlugin } from "./CustomImageUploadAdapter";
 
 import 'ckeditor5/ckeditor5.css';
-import ThisCustomImageUploadAdapterPlugin from "./CustomImageUploadAdapter";
 
 function Create() {
     const params = useParams();
@@ -54,6 +54,8 @@ function Create() {
     const [draft, setDraft] = useState(false);
     const navigate = useNavigate();
     const [mode, setMode] = useState<'create' | 'edit'>('create');
+    const [sessionImages, setSessionImages] = useState<any[]>([]);
+    const [loadedImageLinks, setLoadedImageLinks] = useState<string[]>([]);
 
     function create() {
         axios.post("/api/create-post", {
@@ -85,6 +87,9 @@ function Create() {
         });
     }
 
+
+    
+
     useEffect(() => {
         if (params.id) {
             axios.get<any>(`/api/posts/edit/${params.id}`, {
@@ -98,6 +103,11 @@ function Create() {
                 setSummary(response.data.summary);
                 setText(response.data.text);
                 setDraft(response.data.is_draft);
+
+                /**
+                 * Get all inage links and save them to loadedImageLinks
+                 */
+
                 console.log(response.data);
             }).catch(err => {
                 if (err && err.response.status === 400)
@@ -211,7 +221,7 @@ function Create() {
                             TableToolbar,
                             TextTransformation,
                             Underline,
-                            ThisCustomImageUploadAdapterPlugin
+                            CustomImageUploadAdapterPlugin
                         ],
                         toolbar: {
                             items: [
@@ -252,6 +262,16 @@ function Create() {
                     }}
                     data={text}
                     onChange={(event, editor) => {
+                        const doc: any = event.path[0]
+                        if (doc.differ.hasOwnProperty('_cachedChangesWithGraveyard')) {
+                            const change = doc.differ._cachedChangesWithGraveyard.find((ch: any) => {
+                                return ch.type === 'remove';
+                            })
+                            if (change && change.attributes && change.attributes.get('src')) {
+                                // TODO: This is dataURL of removed image
+                                console.log(change.attributes.get('src'));
+                            }
+                        }
                         setText(editor.getData());
                     }}
                 />
