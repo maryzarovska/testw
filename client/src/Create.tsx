@@ -37,7 +37,14 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { CustomImageUploadAdapterPlugin } from "./CustomImageUploadAdapter";
 
+import { ContentState, convertFromRaw, EditorState } from "draft-js";
+import { Editor } from "react-draft-wysiwyg";
+
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+
 import 'ckeditor5/ckeditor5.css';
+import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
 
 function Create() {
     const params = useParams();
@@ -56,6 +63,8 @@ function Create() {
     const [mode, setMode] = useState<'create' | 'edit'>('create');
     const [sessionImages, setSessionImages] = useState<any[]>([]);
     const [loadedImageLinks, setLoadedImageLinks] = useState<string[]>([]);
+
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
     function create() {
         axios.post("/api/create-post", {
@@ -88,7 +97,7 @@ function Create() {
     }
 
 
-    
+
 
     useEffect(() => {
         if (params.id) {
@@ -103,6 +112,10 @@ function Create() {
                 setSummary(response.data.summary);
                 setText(response.data.text);
                 setDraft(response.data.is_draft);
+                const contentBlock = htmlToDraft(response.data.text);
+        const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+        const newEditorState = EditorState.createWithContent(contentState);
+                setEditorState(newEditorState);
 
                 /**
                  * Get all inage links and save them to loadedImageLinks
@@ -188,7 +201,7 @@ function Create() {
             <input type="text" placeholder="Title" className="title" value={title} onChange={event => setTitle(event.target.value)} /> <br /> <br />
             <textarea name="" id="" cols={80} rows={7} placeholder="Summary" className="summary" value={summary} onChange={event => setSummary(event.target.value)}></textarea> <br /><br />
             <div className="ckeditor-wrap">
-                <CKEditor
+                {/* <CKEditor
                     editor={ClassicEditor}
                     config={{
                         licenseKey: 'GPL',
@@ -273,6 +286,18 @@ function Create() {
                             }
                         }
                         setText(editor.getData());
+                    }}
+                /> */}
+                <Editor
+                    editorState={editorState}
+                    wrapperClassName="demo-wrapper"
+                    editorClassName="demo-editor"
+                    onEditorStateChange={state => {
+                        setEditorState(state);
+                    }}
+                    onContentStateChange={state => {
+                        const html = draftToHtml(state);
+                        setText(html);
                     }}
                 />
                 {/* <textarea
