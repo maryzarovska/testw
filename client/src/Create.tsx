@@ -2,47 +2,13 @@ import React, { useEffect, useState } from "react";
 import './css/Create.css';
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import {
-    Autoformat,
-    BlockQuote,
-    Bold,
-    ClassicEditor,
-    CloudServices,
-    Essentials,
-    Heading,
-    Image,
-    ImageCaption,
-    ImageResize,
-    ImageStyle,
-    ImageToolbar,
-    ImageUpload,
-    // Base64UploadAdapter,
-    Indent,
-    IndentBlock,
-    Italic,
-    Link,
-    List,
-    MediaEmbed,
-    Mention,
-    Paragraph,
-    PasteFromOffice,
-    PictureEditing,
-    Table,
-    TableColumnResize,
-    TableToolbar,
-    TextTransformation,
-    Underline,
-} from 'ckeditor5';
 import { useNavigate, useParams } from "react-router-dom";
-import { CustomImageUploadAdapterPlugin } from "./CustomImageUploadAdapter";
 
 import { ContentState, convertFromRaw, EditorState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-import 'ckeditor5/ckeditor5.css';
 import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
 
@@ -113,8 +79,8 @@ function Create() {
                 setText(response.data.text);
                 setDraft(response.data.is_draft);
                 const contentBlock = htmlToDraft(response.data.text);
-        const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-        const newEditorState = EditorState.createWithContent(contentState);
+                const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+                const newEditorState = EditorState.createWithContent(contentState);
                 setEditorState(newEditorState);
 
                 /**
@@ -201,122 +167,30 @@ function Create() {
             <input type="text" placeholder="Title" className="title" value={title} onChange={event => setTitle(event.target.value)} /> <br /> <br />
             <textarea name="" id="" cols={80} rows={7} placeholder="Summary" className="summary" value={summary} onChange={event => setSummary(event.target.value)}></textarea> <br /><br />
             <div className="ckeditor-wrap">
-                {/* <CKEditor
-                    editor={ClassicEditor}
-                    config={{
-                        licenseKey: 'GPL',
-                        plugins: [
-                            Autoformat,
-                            BlockQuote,
-                            Bold,
-                            CloudServices,
-                            Essentials,
-                            Heading,
-                            Image,
-                            ImageCaption,
-                            ImageResize,
-                            ImageStyle,
-                            ImageToolbar,
-                            ImageUpload,
-                            // Base64UploadAdapter,
-                            Indent,
-                            IndentBlock,
-                            Italic,
-                            Link,
-                            List,
-                            MediaEmbed,
-                            Mention,
-                            Paragraph,
-                            PasteFromOffice,
-                            PictureEditing,
-                            Table,
-                            TableColumnResize,
-                            TableToolbar,
-                            TextTransformation,
-                            Underline,
-                            CustomImageUploadAdapterPlugin
-                        ],
-                        toolbar: {
-                            items: [
-                                'undo',
-                                'redo',
-                                '|',
-                                'heading',
-                                '|',
-                                'bold',
-                                'italic',
-                                'underline',
-                                '|',
-                                'link',
-                                'uploadImage',
-                                'insertTable',
-                                'blockQuote',
-                                '|',
-                                'bulletedList',
-                                'numberedList',
-                                '|',
-                                'outdent',
-                                'indent'
-                            ],
-                            shouldNotGroupWhenFull: false
-                        },
-                    }}
-                    onReady={editor => {
-                        editor.editing.view.change((writer) => {
-                            let root = editor.editing.view.document.getRoot();
-                            if (root !== null) {
-                                writer.setStyle(
-                                    "height",
-                                    "500px",
-                                    root
-                                );
-                            }
-                        });
-                    }}
-                    data={text}
-                    onChange={(event, editor) => {
-                        const doc: any = event.path[0]
-                        if (doc.differ.hasOwnProperty('_cachedChangesWithGraveyard')) {
-                            const change = doc.differ._cachedChangesWithGraveyard.find((ch: any) => {
-                                return ch.type === 'remove';
-                            })
-                            if (change && change.attributes && change.attributes.get('src')) {
-                                // TODO: This is dataURL of removed image
-                                console.log(change.attributes.get('src'));
-                            }
-                        }
-                        setText(editor.getData());
-                    }}
-                /> */}
                 <Editor
                     editorState={editorState}
                     wrapperClassName="demo-wrapper"
                     editorClassName="demo-editor"
-                    onEditorStateChange={state => {
+                    onEditorStateChange={(state: any) => {
                         setEditorState(state);
                     }}
-                    onContentStateChange={state => {
+                    onContentStateChange={(state: any) => {
                         const html = draftToHtml(state);
                         setText(html);
                     }}
                 />
-                {/* <textarea
-                    cols={80}
-                    rows={20}
-                    placeholder="Content"
-                    className="text"
-                    value={text}
-                    onChange={event => setText(event.target.value)}
-                ></textarea> */}
             </div>
         </form>
 
-        <input type="checkbox" onChange={event => { setDraft(event.target.checked) }} checked={draft} /> Save as draft <br /> <br />
-        {mode === 'create' ?
-            <button type="button" onClick={create}>Create</button>
-            :
-            <button type="button" onClick={edit}>Save</button>
-        }
+        <div>
+            <input type="checkbox" onChange={event => { setDraft(event.target.checked) }} checked={draft} /> Save as draft <br /> <br />
+            {mode === 'create' ?
+                <button type="button" onClick={create}>Create</button>
+                :
+                <button type="button" onClick={edit}>Save</button>
+            }
+        </div>
+
     </>);
 }
 

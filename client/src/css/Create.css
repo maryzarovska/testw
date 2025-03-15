@@ -40,8 +40,30 @@
 .ckeditor-wrap {
     display: flex;
     justify-content: center;
+    align-items: center;
+    min-height: 500px;
 }
 
-.ckeditor-wrap > *{
-    min-width: 60%;
+.ckeditor-wrap>* {
+    min-width: 620px;
+    max-width: 80%;
+}
+
+.rdw-editor-main {
+    height: auto;
+}
+
+.rdw-editor-wrapper {
+    border: 1px solid #F1F1F1;
+    border-radius: 2px;
+    border-collapse: collapse;
+}
+
+.public-DraftEditor-content {
+    height: 500px;
+    overflow: auto;
+}
+
+button {
+    margin-bottom: 30px;
 }
