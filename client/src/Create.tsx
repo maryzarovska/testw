@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import './css/Create.css';
+
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,6 +11,8 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
+
+import './css/Create.css';
 
 function Create() {
     const params = useParams();
