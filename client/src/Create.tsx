@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { ContentState, convertFromRaw, EditorState } from "draft-js";
+import { ContentState, EditorState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
-
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
 
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import './css/Create.css';
 
 function Create() {
@@ -29,8 +27,6 @@ function Create() {
     const [draft, setDraft] = useState(false);
     const navigate = useNavigate();
     const [mode, setMode] = useState<'create' | 'edit'>('create');
-    const [sessionImages, setSessionImages] = useState<any[]>([]);
-    const [loadedImageLinks, setLoadedImageLinks] = useState<string[]>([]);
 
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
@@ -64,9 +60,6 @@ function Create() {
         });
     }
 
-
-
-
     useEffect(() => {
         if (params.id) {
             axios.get<any>(`/api/posts/edit/${params.id}`, {
@@ -84,15 +77,10 @@ function Create() {
                 const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
                 const newEditorState = EditorState.createWithContent(contentState);
                 setEditorState(newEditorState);
-
-                /**
-                 * Get all inage links and save them to loadedImageLinks
-                 */
-
-                console.log(response.data);
             }).catch(err => {
-                if (err && err.response.status === 400)
+                if (err && err.response.status === 400) {
                     navigate("/");
+                }
             });
         }
         axios.get<{ id: number, cat_name: string }[]>("/api/categories/all").then(response => {
@@ -110,7 +98,6 @@ function Create() {
             setSelectedCategories([...selectedCategories, cat]);
             setCategories(categories.filter(c => c.cat_name !== event.target.value))
         }
-
     }
 
     function toUnselect(event: any) {
@@ -123,7 +110,6 @@ function Create() {
 
     return (<>
         {relationships.map((value, index) =>
-
             <div key={value}>
                 <input type="radio" name="relationships" id={"relation" + index} value={value} onChange={event => setRelationship(event.target.value)} checked={value === relationship} />
                 <label htmlFor={"relation" + index}>{value}</label>
@@ -133,59 +119,89 @@ function Create() {
         <br /><br /><br />
 
         {ratings.map((value, index) =>
-
             <div key={value}>
                 <input type="radio" name="ratings" id={"rating" + index} value={value} onChange={event => setRating(event.target.value)} checked={value === rating} />
                 <label htmlFor={"rating" + index}>{value}</label>
             </div>
-
         )}
 
         <br /><br /><br />
 
         <div className="selectedWrapped">
             <div className="selected">
-                {selectedCategories.map((value, index) =>
-
-                    <span className="selectedCategory" key={value.id}>{value.cat_name} <span data-category={value.cat_name} onClick={toUnselect} style={{ color: "red", cursor: "pointer" }}>&#9932;</span> </span>
-
+                {selectedCategories.map(value =>
+                    <span className="selectedCategory" key={value.id}>
+                        {value.cat_name}&nbsp;
+                        <span data-category={value.cat_name} onClick={toUnselect} style={{ color: "red", cursor: "pointer" }}>
+                            &#9932;
+                        </span>
+                    </span>
                 )}
             </div>
         </div>
 
         <br />
+
         <div>
             <select onChange={toSelect} name="categories" multiple className="categories">
-                {categories.map((value, index) =>
-
+                {categories.map(value =>
                     <option value={value.cat_name} key={value.id}>{value.cat_name}</option>
-
                 )}
             </select>
         </div>
 
-        <form>
-            <br />
-            <input type="text" placeholder="Title" className="title" value={title} onChange={event => setTitle(event.target.value)} /> <br /> <br />
-            <textarea name="" id="" cols={80} rows={7} placeholder="Summary" className="summary" value={summary} onChange={event => setSummary(event.target.value)}></textarea> <br /><br />
-            <div className="ckeditor-wrap">
-                <Editor
-                    editorState={editorState}
-                    wrapperClassName="demo-wrapper"
-                    editorClassName="demo-editor"
-                    onEditorStateChange={(state: any) => {
-                        setEditorState(state);
-                    }}
-                    onContentStateChange={(state: any) => {
-                        const html = draftToHtml(state);
-                        setText(html);
-                    }}
-                />
-            </div>
-        </form>
+        <br />
 
         <div>
-            <input type="checkbox" onChange={event => { setDraft(event.target.checked) }} checked={draft} /> Save as draft <br /> <br />
+            <input
+                type="text"
+                placeholder="Title"
+                className="title"
+                value={title}
+                onChange={event => setTitle(event.target.value)}
+            />
+        </div>
+
+        <br /><br />
+
+        <div>
+            <textarea
+                cols={80}
+                rows={7}
+                placeholder="Summary"
+                className="summary"
+                value={summary}
+                onChange={event => setSummary(event.target.value)}>
+            </textarea>
+        </div>
+
+        <br /><br />
+
+        <div className="ckeditor-wrap">
+            <Editor
+                editorState={editorState}
+                wrapperClassName="demo-wrapper"
+                editorClassName="demo-editor"
+                onEditorStateChange={(state: any) => {
+                    setEditorState(state);
+                }}
+                onContentStateChange={(state: any) => {
+                    const html = draftToHtml(state);
+                    setText(html);
+                }}
+            />
+        </div>
+
+        <div>
+            <input
+                type="checkbox"
+                onChange={event => setDraft(event.target.checked)}
+                checked={draft}
+            />
+            <span>&nbsp;Save as draft</span>
+
+            <br /> <br />
+
             {mode === 'create' ?
                 <button type="button" onClick={create}>Create</button>
                 :
